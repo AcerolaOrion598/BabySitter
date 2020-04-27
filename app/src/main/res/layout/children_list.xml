@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout_children"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/children_list_kid_photo"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:src="@drawable/sayaka2"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/kid_full_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="25dp"
+        android:layout_toEndOf="@+id/children_list_kid_photo"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/colorBlack60"
+        android:textSize="18sp" />
+
+</RelativeLayout>

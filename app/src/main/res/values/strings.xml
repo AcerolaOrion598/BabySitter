@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">BabySitter</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_children">Ваша Группа</string>
+    <string name="group">Группа</string>
+    <string name="name_title_text">Имя</string>
+    <string name="patronymic_title_text">Отчество</string>
+    <string name="surname_title_text">Фамилия</string>
+    <string name="kid_age_title_text">Возраст</string>
+    <string name="kid_locker_title_text">Шкафчик</string>
+    <string name="kid_blood_type_title_text">Группа Крови</string>
+    <string name="parent_role_title_text">Степень Родства</string>
+    <string name="parent_kid_title_text">Ребёнок</string>
+    <string name="parent_phone_num_title_text">Телефон</string>
+</resources>
