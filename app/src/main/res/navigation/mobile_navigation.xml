@@ -16,7 +16,7 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.djaphar.babysitter.Fragments.NotificationsFragment"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_billing"
+        android:name="com.djaphar.babysitter.Fragments.BillingFragment"
+        tools:layout="@layout/fragment_billing" />
 </navigation>

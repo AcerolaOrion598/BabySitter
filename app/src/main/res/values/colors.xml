@@ -10,8 +10,15 @@
     <color name="colorBlack87">#DE000000</color>
     <color name="colorBlack60">#99000000</color>
     <color name="colorBlack30">#4D000000</color>
+    <color name="colorGreen87">#DE64DD17</color>
+    <color name="colorGreen60">#9964DD17</color>
+    <color name="colorGreen30">#4D64DD17</color>
+    <color name="colorRed87">#DE870000</color>
+    <color name="colorRed60">#99870000</color>
+    <color name="colorRed30">#4D870000</color>
     <color name="colorPrimaryLight">#FFECB3</color>
     <color name="colorPrimary">#FFD149</color>
     <color name="colorAccent">#FFA000</color>
+    <color name="colorAccent30">#4DFFA000</color>
     <color name="colorPrimaryDark">#C67100</color>
 </resources>

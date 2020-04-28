@@ -98,17 +98,17 @@ public class ChildrenFragment extends MyFragment {
             childrenRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
 
-        kidNameContainer.setOnClickListener(lView -> new MainDialog("Имя", currentKid.getName(),
+        kidNameContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.name_title_text), currentKid.getName(),
                 kidNameContent).show(getParentFragmentManager(), "dialog"));
-        kidPatronymicContainer.setOnClickListener(lView -> new MainDialog("Отчество", currentKid.getPatronymic(),
+        kidPatronymicContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.patronymic_title_text), currentKid.getPatronymic(),
                 kidPatronymicContent).show(getParentFragmentManager(), "dialog"));
-        kidSurnameContainer.setOnClickListener(lView -> new MainDialog("Фамилия", currentKid.getSurname(),
+        kidSurnameContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.surname_title_text), currentKid.getSurname(),
                 kidSurnameContent).show(getParentFragmentManager(), "dialog"));
-        kidAgeContainer.setOnClickListener(lView -> new MainDialog("Возраст", currentKid.getAge(),
+        kidAgeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_age_title_text), currentKid.getAge(),
                 kidAgeContent).show(getParentFragmentManager(), "dialog"));
-        kidLockerContainer.setOnClickListener(lView -> new MainDialog("Шкафчик", currentKid.getLocker().toString(),
+        kidLockerContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_locker_title_text), currentKid.getLocker().toString(),
                 kidLockerContent).show(getParentFragmentManager(), "dialog"));
-        kidBloodTypeContainer.setOnClickListener(lView -> new MainDialog("Группа Крови", currentKid.getBloodType(),
+        kidBloodTypeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_blood_type_title_text), currentKid.getBloodType(),
                 kidBloodTypeContent).show(getParentFragmentManager(), "dialog"));
     }
 

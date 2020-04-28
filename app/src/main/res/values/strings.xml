@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">BabySitter</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_billing">Ваши Счета</string>
     <string name="title_children">Ваша Группа</string>
     <string name="group">Группа</string>
+    <string name="billing">Счета</string>
+    <string name="bill_text">Счёт #</string>
     <string name="name_title_text">Имя</string>
     <string name="patronymic_title_text">Отчество</string>
     <string name="surname_title_text">Фамилия</string>
@@ -13,4 +15,17 @@
     <string name="parent_role_title_text">Степень Родства</string>
     <string name="parent_kid_title_text">Ребёнок</string>
     <string name="parent_phone_num_title_text">Телефон</string>
+    <string name="cancel_button">Отмена</string>
+    <string name="ok_button">Ок</string>
+    <string name="billing_target_default_text">Всей Группе</string>
+    <string name="bill_status_true">Оплачен</string>
+    <string name="bill_status_false">Неоплачен</string>
+    <string name="bill_theme_title_text">Категория</string>
+    <string name="bill_price_title_text">Сумма, руб.</string>
+    <string name="bill_target_title_text">Ребёнок</string>
+    <string name="bill_description_title">Введите комментарий</string>
+    <string name="bill_description_ed_hint">Комментарий</string>
+    <string name="save_btn_text">Сохранить</string>
+    <string name="delete_btn_text">Удалить</string>
+    <string name="bill_status_title_text">Статус</string>
 </resources>

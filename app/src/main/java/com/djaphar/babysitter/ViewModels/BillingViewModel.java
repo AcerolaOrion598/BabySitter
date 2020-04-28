@@ -2,6 +2,7 @@ package com.djaphar.babysitter.ViewModels;
 
 import android.app.Application;
 
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Bill;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Kid;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Parent;
 
@@ -11,11 +12,12 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-public class ChildrenViewModel extends AndroidViewModel {
+public class BillingViewModel extends AndroidViewModel {
 
+    private MutableLiveData<ArrayList<Bill>> billsMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<ArrayList<Kid>> kidsMutableLiveData = new MutableLiveData<>();
 
-    public ChildrenViewModel(@NonNull Application application) {
+    public BillingViewModel(@NonNull Application application) {
         super(application);
         Parent parent1 = new Parent("Какой-то", "Азиатский", "Мужык", "Батя", "88005553535",
                 "https://cdn.v2ex.com/gravatar/704e7c12cdc2a663fd7c6521dd8a332d?s=1000&d=mm");
@@ -39,13 +41,23 @@ public class ChildrenViewModel extends AndroidViewModel {
         Kid kid5 = new Kid("Мадока", "Ведьма", "Канаме", "14 лет", "Супер Магическая III",
                 "https://c.wallhere.com/photos/e8/ac/anime_anime_girls_kawaii_girl_pink_white_dress_Mahou_Shoujo_Madoka_Magica_Kaname_Madoka_pink_hair-1309355.jpg!d",
                 232, parents);
+        Bill bill1 = new Bill("Экскурсия", kid1, false, 5000f, 2);
+        Bill bill2 = new Bill("Ремонт", null, true, 4000.24f, 1);
+        ArrayList<Bill> bills = new ArrayList<>();
+        bills.add(bill1);
+        bills.add(bill2);
         ArrayList<Kid> kids = new ArrayList<>();
+        billsMutableLiveData.setValue(bills);
         kids.add(kid1);
         kids.add(kid2);
         kids.add(kid3);
         kids.add(kid4);
         kids.add(kid5);
         kidsMutableLiveData.setValue(kids);
+    }
+
+    public MutableLiveData<ArrayList<Bill>> getBills() {
+        return billsMutableLiveData;
     }
 
     public MutableLiveData<ArrayList<Kid>> getKids() {
