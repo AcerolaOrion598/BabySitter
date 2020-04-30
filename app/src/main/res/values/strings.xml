@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">BabySitter</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_billing">Ваши Счета</string>
     <string name="title_children">Ваша Группа</string>
+    <string name="title_billing">Ваши Счета</string>
+    <string name="title_event">Ваши События</string>
     <string name="group">Группа</string>
+    <string name="event">События</string>
     <string name="billing">Счета</string>
     <string name="bill_text">Счёт #</string>
     <string name="name_title_text">Имя</string>
@@ -24,8 +25,21 @@
     <string name="bill_price_title_text">Сумма, руб.</string>
     <string name="bill_target_title_text">Ребёнок</string>
     <string name="bill_description_title">Введите комментарий</string>
-    <string name="bill_description_ed_hint">Комментарий</string>
+    <string name="comment_ed_hint">Комментарий</string>
     <string name="save_btn_text">Сохранить</string>
     <string name="delete_btn_text">Удалить</string>
     <string name="bill_status_title_text">Статус</string>
+    <string name="schedule_container_tv_text">Отметки Присутствия</string>
+    <string name="schedule_arrive_text">Пришёл</string>
+    <string name="schedule_leave">Ушёл</string>
+    <string name="event_date_text">Дата События</string>
+    <string name="eating_container_tv_text">Приём Пищи</string>
+    <string name="other_text">Другое</string>
+    <string name="sleep_end_text">Проснулся</string>
+    <string name="sleep_start_text">Заснул</string>
+    <string name="sleeping_text">Сон</string>
+    <string name="eating_denial_text">Отказ От Пищи</string>
+    <string name="eating_food_text">Рацион</string>
+    <string name="eating_event_text">Событие</string>
+    <string name="event_children_list_container_text">Выберите ребёнка, чтобы добавить событие</string>
 </resources>

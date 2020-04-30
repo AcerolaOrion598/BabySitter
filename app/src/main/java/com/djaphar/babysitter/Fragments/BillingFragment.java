@@ -89,11 +89,11 @@ public class BillingFragment extends MyFragment {
 
         billThemeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_theme_title_text), currentBill.getTheme(),
                 billThemeContent).show(getParentFragmentManager(), "dialog"));
-        billPriceContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_theme_title_text), String.valueOf(currentBill.getPrice()),
+        billPriceContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_price_title_text), String.valueOf(currentBill.getPrice()),
                 billPriceContent).show(getParentFragmentManager(), "dialog"));
 
         billTargetContainer.setOnClickListener(lView -> {
-            View inflatedView = View.inflate(context, R.layout.recycler_dialog, null);
+            View inflatedView = View.inflate(context, R.layout.recycler_kid_dialog, null);
             RecyclerView billTargetRecyclerView = inflatedView.findViewById(R.id.bill_target_recycler_view);
             billTargetRecyclerView.setAdapter(new BillTargetListRecyclerViewAdapter(kids, this));
             billTargetRecyclerView.setNestedScrollingEnabled(false);
@@ -135,6 +135,7 @@ public class BillingFragment extends MyFragment {
         currentBill = null;
         mainActivity.setActionBarTitle(getString(R.string.title_billing));
         billingListLayout.setVisibility(View.VISIBLE);
+        ViewDriver.toggleChildViewsEnable(billContainer, false);
         ViewDriver.hideView(billContainer, R.anim.hide_right_animation, context);
     }
 
@@ -164,6 +165,7 @@ public class BillingFragment extends MyFragment {
     }
 
     private void openBillContainer(String actionBarTitle) {
+        ViewDriver.toggleChildViewsEnable(billContainer, true);
         mainActivity.setActionBarTitle(getString(R.string.bill_text) + actionBarTitle);
         Animation animation = ViewDriver.showView(billContainer, R.anim.show_right_animation, context);
         animation.setAnimationListener(new Animation.AnimationListener() {

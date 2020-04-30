@@ -3,6 +3,7 @@ package com.djaphar.babysitter.SupportClasses.OtherClasses;
 import android.content.Context;
 import android.content.res.Resources;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
@@ -33,6 +34,12 @@ public class ViewDriver {
         return animation;
     }
 
+    private static Animation animateView(View view, int animationResource, Context context) {
+        Animation animation = AnimationUtils.loadAnimation(context, animationResource);
+        view.startAnimation(animation);
+        return animation;
+    }
+
     public static void setStatusTvOptions(TextView tv, Resources resources, boolean isTrue) {
         String status;
         int color;
@@ -47,9 +54,13 @@ public class ViewDriver {
         tv.setText(status);
     }
 
-    private static Animation animateView(View view, int animationResource, Context context) {
-        Animation animation = AnimationUtils.loadAnimation(context, animationResource);
-        view.startAnimation(animation);
-        return animation;
+    public static void toggleChildViewsEnable(View view, boolean enabled) {
+        view.setEnabled(enabled);
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                toggleChildViewsEnable(viewGroup.getChildAt(i), enabled);
+            }
+        }
     }
 }

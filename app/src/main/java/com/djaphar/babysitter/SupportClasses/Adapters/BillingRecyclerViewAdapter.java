@@ -39,7 +39,8 @@ public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecy
         final Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.billing_list, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.parentLayout.setOnClickListener(lView -> billingFragment.showBill(bills.get(viewHolder.getAdapterPosition())));
+        viewHolder.parentLayout.setOnClickListener(lView ->
+                billingFragment.showBill(bills.get(viewHolder.getAdapterPosition())));
         return viewHolder;
     }
 

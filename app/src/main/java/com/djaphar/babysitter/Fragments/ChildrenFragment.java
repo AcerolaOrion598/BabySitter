@@ -129,6 +129,7 @@ public class ChildrenFragment extends MyFragment {
             viewToShow = kidInfoContainer;
             viewToHide = parentInfoContainer;
         } else if (kidInfoContainer.getVisibility() == View.VISIBLE) {
+            ViewDriver.toggleChildViewsEnable(kidInfoContainer, false);
             actionBarTitle = getString(R.string.title_children);
             viewToShow = childrenListLayout;
             viewToHide = kidInfoContainer;
@@ -160,6 +161,7 @@ public class ChildrenFragment extends MyFragment {
         parentsRecyclerView.setAdapter(new ParentsRecyclerViewAdapter(kid, this));
         parentsRecyclerView.setNestedScrollingEnabled(false);
         parentsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        ViewDriver.toggleChildViewsEnable(kidInfoContainer, true);
         Animation animation = ViewDriver.showView(kidInfoContainer, R.anim.show_right_animation, context);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override

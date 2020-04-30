@@ -4,4 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="info_row_vertical_margin">25dp</dimen>
     <dimen name="screen_horizontal_padding">25dp</dimen>
+    <dimen name="thick_top_border_thickness">7dp</dimen>
+    <dimen name="thick_top_border_thickness_neg">-7dp</dimen>
 </resources>

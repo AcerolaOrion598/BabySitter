@@ -11,9 +11,9 @@
         tools:layout="@layout/fragment_children" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.djaphar.babysitter.Fragments.DashboardFragment"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_event"
+        android:name="com.djaphar.babysitter.Fragments.EventFragment"
+        tools:layout="@layout/fragment_event" />
 
     <fragment
         android:id="@+id/navigation_billing"
