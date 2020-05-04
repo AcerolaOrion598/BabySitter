@@ -5,22 +5,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/children_list_layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/children_list_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/screen_horizontal_padding"
-        android:paddingEnd="@dimen/screen_horizontal_padding"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/children_recycler_view"
+        <RelativeLayout
+            android:id="@+id/children_list_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/screen_horizontal_padding"
+            android:paddingEnd="@dimen/screen_horizontal_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/children_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/new_kid_btn"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/round_button"
+            android:src="@drawable/plus_icon"
+            android:tint="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/kid_info_container"
@@ -310,6 +329,47 @@
                         android:layout_height="wrap_content" />
 
                 </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/invite_code_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/thin_top_border"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/screen_horizontal_padding"
+                    android:paddingEnd="@dimen/screen_horizontal_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/parents_list_layout">
+
+                    <TextView
+                        android:id="@+id/invite_code_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="@dimen/info_row_vertical_margin"
+                        android:layout_marginBottom="@dimen/info_row_vertical_margin"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/roboto"
+                        android:text="@string/invite_code_title_text"
+                        android:textColor="@color/colorBlack87"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/invite_code_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="@dimen/info_row_vertical_margin"
+                        android:layout_marginBottom="@dimen/info_row_vertical_margin"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/roboto_medium"
+                        android:gravity="end"
+                        android:textColor="@color/colorBlack87"
+                        android:textIsSelectable="true"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

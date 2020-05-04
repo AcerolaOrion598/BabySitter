@@ -7,8 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.djaphar.babysitter.Activities.MainActivity;
@@ -39,32 +40,37 @@ public class BillingFragment extends MyFragment {
     private MainActivity mainActivity;
     private Context context;
     private RecyclerView billingRecyclerView;
-    private RelativeLayout billingListLayout;
     private LinearLayout billThemeContainer, billPriceContainer, billTargetContainer, billStatusContainer;
-    private ConstraintLayout billContainer;
+    private ConstraintLayout billContainer, billingListContainer;
     private TextView billThemeContent, billPriceContent, billTargetContent, billStatusContent;
+    private Button billDeleteBtn;
+    private ImageButton newBillBtn;
     private Bill currentBill;
     private ArrayList<Kid> kids;
     private AlertDialog billTargetDialog;
+    private boolean firstOpened = true;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         billingViewModel = new ViewModelProvider(this).get(BillingViewModel.class);
         View root = inflater.inflate(R.layout.fragment_billing, container, false);
         billingRecyclerView = root.findViewById(R.id.billing_recycler_view);
-        billingListLayout = root.findViewById(R.id.billing_list_layout);
         billThemeContainer = root.findViewById(R.id.bill_theme_container);
         billPriceContainer = root.findViewById(R.id.bill_price_container);
         billTargetContainer = root.findViewById(R.id.bill_target_container);
         billStatusContainer = root.findViewById(R.id.bill_status_container);
         billContainer = root.findViewById(R.id.bill_container);
+        billingListContainer = root.findViewById(R.id.billing_list_container);
         billThemeContent = root.findViewById(R.id.bill_theme_content);
         billPriceContent = root.findViewById(R.id.bill_price_content);
         billTargetContent = root.findViewById(R.id.bill_target_content);
         billStatusContent = root.findViewById(R.id.bill_status_content);
+        billDeleteBtn = root.findViewById(R.id.bill_delete_btn);
+        newBillBtn = root.findViewById(R.id.new_bill_btn);
         context = getContext();
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
-            mainActivity.setActionBarTitle(getString(R.string.title_billing));
+            setActionBarTitle(getString(R.string.title_billing));
+            setBackBtnState(false);
         }
         return root;
     }
@@ -76,8 +82,25 @@ public class BillingFragment extends MyFragment {
             if (bills == null) {
                 return;
             }
-            billingRecyclerView.setAdapter(new BillingRecyclerViewAdapter(bills, this));
-            billingRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            BillingRecyclerViewAdapter adapter = new BillingRecyclerViewAdapter(bills, this);
+            billingRecyclerView.setAdapter(adapter);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+            billingRecyclerView.setLayoutManager(layoutManager);
+            billingRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (firstOpened) {
+                        firstOpened = false;
+                        return;
+                    }
+                    if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter.getItemCount() - 1) {
+                        ViewDriver.hideView(newBillBtn, R.anim.bottom_view_hide_animation, context);
+                    } else {
+                        ViewDriver.showView(newBillBtn, R.anim.bottom_view_show_animation, context);
+                    }
+                }
+            });
         });
 
         billingViewModel.getKids().observe(getViewLifecycleOwner(), kids -> {
@@ -87,9 +110,9 @@ public class BillingFragment extends MyFragment {
             this.kids = kids;
         });
 
-        billThemeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_theme_title_text), currentBill.getTheme(),
+        billThemeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_theme_title_text), billThemeContent.getText().toString(),
                 billThemeContent).show(getParentFragmentManager(), "dialog"));
-        billPriceContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_price_title_text), String.valueOf(currentBill.getPrice()),
+        billPriceContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_price_title_text), billPriceContent.getText().toString(),
                 billPriceContent).show(getParentFragmentManager(), "dialog"));
 
         billTargetContainer.setOnClickListener(lView -> {
@@ -100,7 +123,7 @@ public class BillingFragment extends MyFragment {
             billTargetRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             ConstraintLayout billTargetDefaultContainer = inflatedView.findViewById(R.id.bill_target_default_container);
             billTargetDefaultContainer.setOnClickListener(container -> setBillTarget(new Kid(getString(R.string.billing_target_default_text),
-                    null, "", null, null, null, null, null)));
+                    null, "", null, null, null, null, null, null)));
             billTargetDialog = new AlertDialog.Builder(mainActivity)
                     .setView(inflatedView)
                     .setTitle(R.string.parent_kid_title_text)
@@ -125,6 +148,25 @@ public class BillingFragment extends MyFragment {
                     .create()
                     .show();
         });
+
+        billDeleteBtn.setOnClickListener(lView -> new AlertDialog.Builder(context)
+                .setTitle(R.string.delete_bill_title)
+                .setMessage(R.string.delete_bill_message)
+                .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
+                .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
+
+                })
+                .show());
+
+        newBillBtn.setOnClickListener(lView -> showBill(new Bill(null, null ,false, 0f, null)));
+    }
+
+    private void setActionBarTitle(String title) {
+        mainActivity.setActionBarTitle(title);
+    }
+
+    private void setBackBtnState(boolean visible) {
+        mainActivity.setBackBtnState(visible);
     }
 
     public boolean everythingIsClosed() {
@@ -133,8 +175,9 @@ public class BillingFragment extends MyFragment {
 
     public void backWasPressed() {
         currentBill = null;
-        mainActivity.setActionBarTitle(getString(R.string.title_billing));
-        billingListLayout.setVisibility(View.VISIBLE);
+        setActionBarTitle(getString(R.string.title_billing));
+        setBackBtnState(false);
+        billingListContainer.setVisibility(View.VISIBLE);
         ViewDriver.toggleChildViewsEnable(billContainer, false);
         ViewDriver.hideView(billContainer, R.anim.hide_right_animation, context);
     }
@@ -147,31 +190,48 @@ public class BillingFragment extends MyFragment {
 
     public void showBill(Bill bill) {
         currentBill = bill;
-        billThemeContent.setText(bill.getTheme());
+        billDeleteBtn.setVisibility(View.VISIBLE);
+
+        String theme = bill.getTheme();
+        if (theme == null) {
+            theme = "Н/д";
+            billDeleteBtn.setVisibility(View.GONE);
+        }
+        billThemeContent.setText(theme);
+
         float price = bill.getPrice();
         if (price == (int) price) {
             billPriceContent.setText(String.valueOf((int) price));
         } else {
             billPriceContent.setText(String.format(Locale.US, "%.2f", bill.getPrice()));
         }
+
         String target = getString(R.string.billing_target_default_text);
         Kid kid = bill.getKid();
         if (kid != null) {
             target = kid.getName() + " " + kid.getSurname();
         }
         billTargetContent.setText(target);
+
         ViewDriver.setStatusTvOptions(billStatusContent, getResources(), bill.getStatus());
-        openBillContainer(String.valueOf(bill.getId()));
+
+        Integer id = bill.getId();
+        String actionBarTitle = "Новый Счёт";
+        if (id != null) {
+            actionBarTitle = getString(R.string.bill_text) + id;
+        }
+        openBillContainer(actionBarTitle);
     }
 
     private void openBillContainer(String actionBarTitle) {
+        setActionBarTitle(actionBarTitle);
+        setBackBtnState(true);
         ViewDriver.toggleChildViewsEnable(billContainer, true);
-        mainActivity.setActionBarTitle(getString(R.string.bill_text) + actionBarTitle);
         Animation animation = ViewDriver.showView(billContainer, R.anim.show_right_animation, context);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
-                billingListLayout.setVisibility(View.GONE);
+                billingListContainer.setVisibility(View.GONE);
             }
 
             @Override

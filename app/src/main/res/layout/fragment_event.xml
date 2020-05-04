@@ -57,7 +57,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/event_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/colorTinyGrey"
         android:elevation="10dp"
         android:visibility="gone"
@@ -165,15 +165,19 @@
                             android:textColor="@color/colorBlack87"
                             android:textSize="18sp" />
 
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/schedule_arrive_switch"
+                        <TextView
+                            android:id="@+id/schedule_arrive_content"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginTop="@dimen/info_row_vertical_margin"
                             android:layout_marginBottom="@dimen/info_row_vertical_margin"
                             android:layout_weight="1"
-                            android:gravity="end" />
+                            android:fontFamily="@font/roboto_medium"
+                            android:gravity="end"
+                            android:text="10:00"
+                            android:textColor="@color/colorBlack87"
+                            android:textSize="18sp" />
 
                     </LinearLayout>
 
@@ -200,15 +204,19 @@
                             android:textColor="@color/colorBlack87"
                             android:textSize="18sp" />
 
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/schedule_leave_switch"
+                        <TextView
+                            android:id="@+id/schedule_leave_content"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginTop="@dimen/info_row_vertical_margin"
                             android:layout_marginBottom="@dimen/info_row_vertical_margin"
                             android:layout_weight="1"
-                            android:gravity="end" />
+                            android:fontFamily="@font/roboto_medium"
+                            android:gravity="end"
+                            android:text="18:00"
+                            android:textColor="@color/colorBlack87"
+                            android:textSize="18sp" />
 
                     </LinearLayout>
 

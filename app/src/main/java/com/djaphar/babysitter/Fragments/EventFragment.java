@@ -45,12 +45,14 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
     private RecyclerView eventChildrenRecyclerView;
     private ConstraintLayout eventContainer;
     private ScrollView eventSv, eventChildrenListSv;
-    private LinearLayout eventDateContainer, sleepStartContainer, sleepEndContainer, eatingFoodContainer, eatingDenialContainer;
-    private TextView eventDateContent, sleepStartContent, sleepEndContent, eatingFoodContent, eatingDenialContent;
+    private LinearLayout eventDateContainer, scheduleArriveContainer, scheduleLeaveContainer, sleepStartContainer,
+            sleepEndContainer, eatingFoodContainer, eatingDenialContainer;
+    private TextView eventDateContent, scheduleArriveContent, scheduleLeaveContent, sleepStartContent,
+            sleepEndContent, eatingFoodContent, eatingDenialContent;
     private Calendar calendar;
     private ArrayList<Meal> meals, selectedMeals, tempSelectedMeals = new ArrayList<>(), deniedMeals, tempDeniedMeals = new ArrayList<>();
     private int curYear, curMonth, curDayOfMonth;
-    private boolean sleepStart;
+    private Boolean sleepStart, arrive;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
@@ -60,11 +62,15 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         eventContainer = root.findViewById(R.id.event_container);
         eventSv = root.findViewById(R.id.event_sv);
         eventDateContainer = root.findViewById(R.id.event_date_container);
+        scheduleArriveContainer = root.findViewById(R.id.schedule_arrive_container);
+        scheduleLeaveContainer = root.findViewById(R.id.schedule_leave_container);
         sleepStartContainer = root.findViewById(R.id.sleep_start_container);
         sleepEndContainer = root.findViewById(R.id.sleep_end_container);
         eatingFoodContainer = root.findViewById(R.id.eating_food_container);
         eatingDenialContainer = root.findViewById(R.id.eating_denial_container);
         eventDateContent = root.findViewById(R.id.event_date_content);
+        scheduleArriveContent = root.findViewById(R.id.schedule_arrive_content);
+        scheduleLeaveContent = root.findViewById(R.id.schedule_leave_content);
         sleepStartContent = root.findViewById(R.id.sleep_start_content);
         sleepEndContent = root.findViewById(R.id.sleep_end_content);
         eatingFoodContent = root.findViewById(R.id.eating_food_content);
@@ -76,7 +82,8 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         curDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
-            mainActivity.setActionBarTitle(getString(R.string.title_event));
+            setActionBarTitle(getString(R.string.title_event));
+            setBackBtnState(false);
         }
         return root;
     }
@@ -120,8 +127,25 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         eventDateContainer.setOnClickListener(lView -> new DatePickerDialog(mainActivity, this,
                 calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show());
 
+        scheduleArriveContainer.setOnClickListener(lView -> {
+            arrive = true;
+            sleepStart = null;
+            new TimePickerDialog(mainActivity, this,
+                    Calendar.getInstance().get(Calendar.HOUR), Calendar.getInstance().get(Calendar.MINUTE),
+                    android.text.format.DateFormat.is24HourFormat(mainActivity)).show();
+        });
+
+        scheduleLeaveContainer.setOnClickListener(lView -> {
+            arrive = false;
+            sleepStart = null;
+            new TimePickerDialog(mainActivity, this,
+                    Calendar.getInstance().get(Calendar.HOUR), Calendar.getInstance().get(Calendar.MINUTE),
+                    android.text.format.DateFormat.is24HourFormat(mainActivity)).show();
+        });
+
         sleepStartContainer.setOnClickListener(lView -> {
             sleepStart = true;
+            arrive = null;
             new TimePickerDialog(mainActivity, this,
                     Calendar.getInstance().get(Calendar.HOUR), Calendar.getInstance().get(Calendar.MINUTE),
                     android.text.format.DateFormat.is24HourFormat(mainActivity)).show();
@@ -129,6 +153,7 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
 
         sleepEndContainer.setOnClickListener(lView -> {
             sleepStart = false;
+            arrive = null;
             new TimePickerDialog(mainActivity, this,
                     Calendar.getInstance().get(Calendar.HOUR), Calendar.getInstance().get(Calendar.MINUTE),
                     android.text.format.DateFormat.is24HourFormat(mainActivity)).show();
@@ -189,12 +214,21 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         });
     }
 
+    private void setActionBarTitle(String title) {
+        mainActivity.setActionBarTitle(title);
+    }
+
+    private void setBackBtnState(boolean visible) {
+        mainActivity.setBackBtnState(visible);
+    }
+
     public boolean everythingIsClosed() {
         return eventContainer.getVisibility() != View.VISIBLE;
     }
 
     public void backWasPressed() {
-        mainActivity.setActionBarTitle(getString(R.string.title_event));
+        setActionBarTitle(getString(R.string.title_event));
+        setBackBtnState(false);
         ViewDriver.toggleChildViewsEnable(eventContainer, false);
         eventChildrenListSv.setVisibility(View.VISIBLE);
         ViewDriver.hideView(eventContainer, R.anim.hide_right_animation, context);
@@ -204,7 +238,8 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         setCalendarOptions(curYear, curMonth, curDayOfMonth);
         eventDateContent.setText(DateFormat.getDateInstance().format(calendar.getTime()));
         String fullName = kid.getName() + " " + kid.getSurname();
-        mainActivity.setActionBarTitle(fullName);
+        setActionBarTitle(fullName);
+        setBackBtnState(true);
         eventSv.scrollTo(0, eventSv.getTop());
         ViewDriver.toggleChildViewsEnable(eventContainer, true);
         Animation animation = ViewDriver.showView(eventContainer, R.anim.show_right_animation, context);
@@ -237,7 +272,14 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
     @Override
     public void onTimeSet(TimePicker timePicker, int hour, int minute) {
         @SuppressLint("DefaultLocale") String pickedTime = String.format("%02d:%02d", hour, minute);
-        if (sleepStart) {
+
+        if (arrive != null) {
+           if (arrive) {
+               scheduleArriveContent.setText(pickedTime);
+           } else {
+               scheduleLeaveContent.setText(pickedTime);
+           }
+        } else if (sleepStart) {
             sleepStartContent.setText(pickedTime);
         } else {
             sleepEndContent.setText(pickedTime);

@@ -27,9 +27,9 @@ public class ParentsRecyclerViewAdapter extends RecyclerView.Adapter<ParentsRecy
         this.kid = kid;
         this.parents = kid.getParents();
         this.childrenFragment = childrenFragment;
-        if (getItemCount() == 0) {
-            parents.add(new Parent("123456", null, null, "Инвайт", null, null));
-        }
+//        if (getItemCount() == 0) {
+//            parents.add(new Parent("123456", null, null, "Инвайт", null, null));
+//        }
     }
 
     @NonNull
@@ -38,13 +38,7 @@ public class ParentsRecyclerViewAdapter extends RecyclerView.Adapter<ParentsRecy
         final Context context = parentViewGroup.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.parents_list, parentViewGroup, false);
         final ViewHolder viewHolder = new ViewHolder(view);
-        Parent parent = parents.get(0);
-        if (parent.getPatronymic() != null) {
-            viewHolder.parentContent.setTextIsSelectable(false);
-            viewHolder.parentLayout.setOnClickListener(lView -> childrenFragment.showParentInfo(parents.get(viewHolder.getAdapterPosition()), kid));
-        } else {
-            viewHolder.parentContent.setTextIsSelectable(true);
-        }
+        viewHolder.parentLayout.setOnClickListener(lView -> childrenFragment.showParentInfo(parents.get(viewHolder.getAdapterPosition()), kid));
         return viewHolder;
     }
 

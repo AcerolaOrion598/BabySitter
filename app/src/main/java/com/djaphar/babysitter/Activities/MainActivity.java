@@ -1,6 +1,8 @@
 package com.djaphar.babysitter.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.djaphar.babysitter.R;
@@ -16,7 +18,7 @@ import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView actionBarTitle;
+    private TextView actionBarTitle, backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(R.layout.actoin_bar);
             actionBarTitle = findViewById(R.id.action_bar_title);
+            backBtn = findViewById(R.id.back_btn);
+            backBtn.setOnClickListener(lView -> onBackPressed());
         }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
@@ -48,12 +52,25 @@ public class MainActivity extends AppCompatActivity {
 
         if (currentFragment.everythingIsClosed()) {
             super.onBackPressed();
-        } else {
-            currentFragment.backWasPressed();
+            return;
         }
+        currentFragment.backWasPressed();
     }
 
     public void setActionBarTitle(String title) {
         actionBarTitle.setText(title);
+    }
+
+    public void setBackBtnState(boolean visible) {
+        if (visible) {
+            backBtn.setVisibility(View.VISIBLE);
+            return;
+        }
+        backBtn.setVisibility(View.GONE);
+    }
+
+    public void logout() {
+        startActivity(new Intent(this, AuthActivity.class));
+        finish();
     }
 }

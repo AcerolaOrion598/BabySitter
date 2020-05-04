@@ -25,7 +25,8 @@ public class EventChildrenRecyclerViewAdapter extends RecyclerView.Adapter<Event
         this.kids = kids;
         this.eventFragment = eventFragment;
         if (kids.size() == 0) {
-            kids.add(new Kid("В группе никого нет...", null, null, null, null, null, null, null));
+            kids.add(new Kid(eventFragment.getString(R.string.kids_null_text), null, null, null,
+                    null, null, null, null, null));
         }
     }
 

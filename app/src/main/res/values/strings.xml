@@ -42,4 +42,22 @@
     <string name="eating_food_text">Рацион</string>
     <string name="eating_event_text">Событие</string>
     <string name="event_children_list_container_text">Выберите ребёнка, чтобы добавить событие</string>
+    <string name="invite_code_title_text">Инвайт</string>
+    <string name="kids_null_text">В группе никого нет…</string>
+    <string name="back_btn_text">Назад</string>
+    <string name="settings">Настройки</string>
+    <string name="meal_list_tv_text">Список Блюд</string>
+    <string name="delete_bill_title">Удалить Счёт</string>
+    <string name="delete_bill_message">Вы действительно хотите удалить этот счёт?</string>
+    <string name="logout_text">Выйти</string>
+    <string name="logout_message">Вы действительно хотите выйти из приложения?</string>
+    <string name="delete_meal_title">Удалить Блюдо</string>
+    <string name="delete_meal_message">Вы действительно хотите удалить это блюдо?</string>
+    <string name="new_meal_title">Новое Блюдо</string>
+    <string name="new_meal_text">Новое блюдо</string>
+    <string name="new_kid_title">Новый Ребёнок</string>
+    <string name="login_title">Вход</string>
+    <string name="login_text">Логин</string>
+    <string name="password_text">Пароль</string>
+    <string name="login_btn_text">Войти</string>
 </resources>

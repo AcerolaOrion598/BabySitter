@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:paddingStart="@dimen/screen_horizontal_padding"
     android:paddingEnd="@dimen/screen_horizontal_padding"
+    android:paddingTop="10dp"
     android:paddingBottom="15dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout

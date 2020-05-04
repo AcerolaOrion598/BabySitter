@@ -7,8 +7,10 @@ public class Kid {
     private String name, patronymic, surname, age, bloodType, photoUrl;
     private Integer locker;
     private ArrayList<Parent> parents;
+    private Integer invite;
 
-    public Kid(String name, String patronymic, String surname, String age, String bloodType, String photoUrl, Integer locker, ArrayList<Parent> parents) {
+    public Kid(String name, String patronymic, String surname, String age, String bloodType, String photoUrl,
+               Integer locker, ArrayList<Parent> parents, Integer invite) {
         this.name = name;
         this.patronymic = patronymic;
         this.surname = surname;
@@ -17,6 +19,7 @@ public class Kid {
         this.photoUrl = photoUrl;
         this.locker = locker;
         this.parents = parents;
+        this.invite = invite;
     }
 
     public String getName() {
@@ -51,6 +54,10 @@ public class Kid {
         return parents;
     }
 
+    public Integer getInvite() {
+        return invite;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -81,5 +88,9 @@ public class Kid {
 
     public void setParents(ArrayList<Parent> parents) {
         this.parents = parents;
+    }
+
+    public void setInvite(Integer invite) {
+        this.invite = invite;
     }
 }

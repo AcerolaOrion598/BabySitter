@@ -6,9 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import com.djaphar.babysitter.ViewModels.ChildrenViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,12 +39,12 @@ public class ChildrenFragment extends MyFragment {
     private MainActivity mainActivity;
     private Context context;
     private RecyclerView childrenRecyclerView, parentsRecyclerView;
-    private RelativeLayout childrenListLayout;
-    private ConstraintLayout kidInfoContainer, parentInfoContainer;
+    private ConstraintLayout kidInfoContainer, parentInfoContainer, childrenListContainer;
     private LinearLayout kidNameContainer, kidPatronymicContainer, kidSurnameContainer, kidAgeContainer, kidLockerContainer, kidBloodTypeContainer;
     private ScrollView kidInfoSv, parentInfoSv;
-    private TextView kidNameContent, kidPatronymicContent, kidSurnameContent, kidAgeContent, kidLockerContent, kidBloodTypeContent,
+    private TextView kidNameContent, kidPatronymicContent, kidSurnameContent, kidAgeContent, kidLockerContent, kidBloodTypeContent, inviteCodeContent,
     parentNameContent, parentPatronymicContent, parentSurnameContent, parentRoleContent, parentKidContent, parentPhoneNumContent;
+    private ImageButton newKidBtn;
     private ImageView kidPhoto, parentPhoto;
     private Kid currentKid;
 
@@ -53,7 +55,6 @@ public class ChildrenFragment extends MyFragment {
         View root = inflater.inflate(R.layout.fragment_children, container, false);
         childrenRecyclerView = root.findViewById(R.id.children_recycler_view);
         parentsRecyclerView = root.findViewById(R.id.parents_recycler_view);
-        childrenListLayout = root.findViewById(R.id.children_list_layout);
         kidInfoContainer = root.findViewById(R.id.kid_info_container);
         parentInfoContainer = root.findViewById(R.id.parent_info_container);
         kidNameContainer = root.findViewById(R.id.kid_name_container);
@@ -64,24 +65,28 @@ public class ChildrenFragment extends MyFragment {
         kidBloodTypeContainer = root.findViewById(R.id.kid_blood_type_container);
         kidInfoSv = root.findViewById(R.id.kid_info_sv);
         parentInfoSv = root.findViewById(R.id.parent_info_sv);
+        childrenListContainer = root.findViewById(R.id.children_list_container);
         kidNameContent = root.findViewById(R.id.kid_name_content);
         kidPatronymicContent = root.findViewById(R.id.kid_patronymic_content);
         kidSurnameContent = root.findViewById(R.id.kid_surname_content);
         kidAgeContent = root.findViewById(R.id.kid_age_content);
         kidLockerContent = root.findViewById(R.id.kid_locker_content);
         kidBloodTypeContent = root.findViewById(R.id.kid_blood_type_content);
+        inviteCodeContent = root.findViewById(R.id.invite_code_content);
         parentNameContent = root.findViewById(R.id.parent_name_content);
         parentPatronymicContent = root.findViewById(R.id.parent_patronymic_content);
         parentSurnameContent = root.findViewById(R.id.parent_surname_content);
         parentRoleContent = root.findViewById(R.id.parent_role_content);
         parentKidContent = root.findViewById(R.id.parent_kid_content);
         parentPhoneNumContent = root.findViewById(R.id.parent_phone_num_content);
+        newKidBtn = root.findViewById(R.id.new_kid_btn);
         kidPhoto = root.findViewById(R.id.kid_photo);
         parentPhoto = root.findViewById(R.id.parent_photo);
         context = getContext();
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             setActionBarTitle(getString(R.string.title_children));
+            setBackBtnState(false);
         }
         return root;
     }
@@ -110,10 +115,31 @@ public class ChildrenFragment extends MyFragment {
                 kidLockerContent).show(getParentFragmentManager(), "dialog"));
         kidBloodTypeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_blood_type_title_text), currentKid.getBloodType(),
                 kidBloodTypeContent).show(getParentFragmentManager(), "dialog"));
+        newKidBtn.setOnClickListener(lView -> {
+            View inflatedView = View.inflate(context, R.layout.new_kid_dialog, null);
+            EditText kidNameEd = inflatedView.findViewById(R.id.kid_name_ed);
+            EditText kidPatronymicEd = inflatedView.findViewById(R.id.kid_patronymic_ed);
+            EditText kidSurnameEd = inflatedView.findViewById(R.id.kid_surname_ed);
+            kidNameEd.setHint(R.string.name_title_text);
+            kidPatronymicEd.setHint(R.string.patronymic_title_text);
+            kidSurnameEd.setHint(R.string.surname_title_text);
+            new AlertDialog.Builder(context)
+                    .setView(inflatedView)
+                    .setTitle(R.string.new_kid_title)
+                    .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
+                    .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
+
+                    })
+                    .show();
+        });
     }
 
     private void setActionBarTitle(String title) {
         mainActivity.setActionBarTitle(title);
+    }
+
+    private void setBackBtnState(boolean visible) {
+        mainActivity.setBackBtnState(visible);
     }
 
     public boolean everythingIsClosed() {
@@ -129,9 +155,10 @@ public class ChildrenFragment extends MyFragment {
             viewToShow = kidInfoContainer;
             viewToHide = parentInfoContainer;
         } else if (kidInfoContainer.getVisibility() == View.VISIBLE) {
+            setBackBtnState(false);
             ViewDriver.toggleChildViewsEnable(kidInfoContainer, false);
             actionBarTitle = getString(R.string.title_children);
-            viewToShow = childrenListLayout;
+            viewToShow = childrenListContainer;
             viewToHide = kidInfoContainer;
         }
 
@@ -158,15 +185,16 @@ public class ChildrenFragment extends MyFragment {
         kidAgeContent.setText(kid.getAge());
         kidLockerContent.setText(String.valueOf(kid.getLocker()));
         kidBloodTypeContent.setText(kid.getBloodType());
+        inviteCodeContent.setText(String.valueOf(kid.getInvite()));
         parentsRecyclerView.setAdapter(new ParentsRecyclerViewAdapter(kid, this));
-        parentsRecyclerView.setNestedScrollingEnabled(false);
         parentsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        setBackBtnState(true);
         ViewDriver.toggleChildViewsEnable(kidInfoContainer, true);
         Animation animation = ViewDriver.showView(kidInfoContainer, R.anim.show_right_animation, context);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
-                childrenListLayout.setVisibility(View.GONE);
+                childrenListContainer.setVisibility(View.GONE);
             }
 
             @Override
