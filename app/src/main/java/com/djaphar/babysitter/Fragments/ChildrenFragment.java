@@ -1,6 +1,7 @@
 package com.djaphar.babysitter.Fragments;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,17 +14,18 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.djaphar.babysitter.Activities.MainActivity;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.Adapters.ChildrenRecyclerViewAdapter;
 import com.djaphar.babysitter.SupportClasses.Adapters.MainDialog;
 import com.djaphar.babysitter.SupportClasses.Adapters.ParentsRecyclerViewAdapter;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Kid;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Parent;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.babysitter.ViewModels.ChildrenViewModel;
+
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,10 +45,12 @@ public class ChildrenFragment extends MyFragment {
     private LinearLayout kidNameContainer, kidPatronymicContainer, kidSurnameContainer, kidAgeContainer, kidLockerContainer, kidBloodTypeContainer;
     private ScrollView kidInfoSv, parentInfoSv;
     private TextView kidNameContent, kidPatronymicContent, kidSurnameContent, kidAgeContent, kidLockerContent, kidBloodTypeContent, inviteCodeContent,
-    parentNameContent, parentPatronymicContent, parentSurnameContent, parentRoleContent, parentKidContent, parentPhoneNumContent;
-    private ImageButton newKidBtn;
+            parentNameContent, parentPatronymicContent, parentSurnameContent, parentRoleContent, parentKidContent, parentPhoneNumContent;
+    private ImageButton newKidBtn, selectPictureBtn;
     private ImageView kidPhoto, parentPhoto;
-    private Kid currentKid;
+    private Child currentChild;
+    private Uri selectedPictureUri;
+    private HashMap<String, String> authHeader = new HashMap<>();
 
     @Nullable
     @Override
@@ -80,6 +84,7 @@ public class ChildrenFragment extends MyFragment {
         parentKidContent = root.findViewById(R.id.parent_kid_content);
         parentPhoneNumContent = root.findViewById(R.id.parent_phone_num_content);
         newKidBtn = root.findViewById(R.id.new_kid_btn);
+        selectPictureBtn = root.findViewById(R.id.select_picture_btn);
         kidPhoto = root.findViewById(R.id.kid_photo);
         parentPhoto = root.findViewById(R.id.parent_photo);
         context = getContext();
@@ -95,26 +100,42 @@ public class ChildrenFragment extends MyFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        childrenViewModel.getKids().observe(getViewLifecycleOwner(), kids -> {
-            if (kids == null) {
+        childrenViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            if (user == null) {
                 return;
             }
-            childrenRecyclerView.setAdapter(new ChildrenRecyclerViewAdapter(kids, this));
+            authHeader.put(getString(R.string.auth_header_key), user.getToken_type() + " " + user.getAccess_token());
+            childrenViewModel.requestChildrenList(authHeader);
+        });
+
+        childrenViewModel.getChildren().observe(getViewLifecycleOwner(), children -> {
+            if (children == null) {
+                return;
+            }
+            childrenRecyclerView.setAdapter(new ChildrenRecyclerViewAdapter(children, this));
             childrenRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
 
-        kidNameContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.name_title_text), currentKid.getName(),
+        childrenViewModel.getCurrentChild().observe(getViewLifecycleOwner(), currentChild -> {
+            if (currentChild == null) {
+                return;
+            }
+            this.currentChild = currentChild;
+        });
+
+        kidNameContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.name_title_text), currentChild.getName(),
                 kidNameContent).show(getParentFragmentManager(), "dialog"));
-        kidPatronymicContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.patronymic_title_text), currentKid.getPatronymic(),
+        kidPatronymicContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.patronymic_title_text), currentChild.getPatronymic(),
                 kidPatronymicContent).show(getParentFragmentManager(), "dialog"));
-        kidSurnameContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.surname_title_text), currentKid.getSurname(),
+        kidSurnameContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.surname_title_text), currentChild.getSurname(),
                 kidSurnameContent).show(getParentFragmentManager(), "dialog"));
-        kidAgeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_age_title_text), currentKid.getAge(),
+        kidAgeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_age_title_text), String.valueOf(currentChild.getAge()),
                 kidAgeContent).show(getParentFragmentManager(), "dialog"));
-        kidLockerContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_locker_title_text), currentKid.getLocker().toString(),
+        kidLockerContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_locker_title_text), currentChild.getLockerNum(),
                 kidLockerContent).show(getParentFragmentManager(), "dialog"));
-        kidBloodTypeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_blood_type_title_text), currentKid.getBloodType(),
+        kidBloodTypeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_blood_type_title_text), currentChild.getBloodType(),
                 kidBloodTypeContent).show(getParentFragmentManager(), "dialog"));
+
         newKidBtn.setOnClickListener(lView -> {
             View inflatedView = View.inflate(context, R.layout.new_kid_dialog, null);
             EditText kidNameEd = inflatedView.findViewById(R.id.kid_name_ed);
@@ -128,10 +149,24 @@ public class ChildrenFragment extends MyFragment {
                     .setTitle(R.string.new_kid_title)
                     .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
                     .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
-
+                        String name = kidNameEd.getText().toString();
+                        if (name.equals("")) {
+                            name = null;
+                        }
+                        String surname = kidSurnameEd.getText().toString();
+                        if (surname.equals("")) {
+                            surname = null;
+                        }
+                        String patronymic = kidPatronymicEd.getText().toString();
+                        if (patronymic.equals("")) {
+                            patronymic = null;
+                        }
+                        childrenViewModel.requestCreateChild(authHeader, new Child(null,null,
+                                null, null, name, surname, patronymic, null, null));
                     })
                     .show();
         });
+        selectPictureBtn.setOnClickListener(lView -> mainActivity.selectPicture());
     }
 
     private void setActionBarTitle(String title) {
@@ -151,7 +186,7 @@ public class ChildrenFragment extends MyFragment {
         View viewToShow = null;
         View viewToHide = null;
         if (parentInfoContainer.getVisibility() == View.VISIBLE) {
-            actionBarTitle = currentKid.getName() + " " + currentKid.getSurname();
+            actionBarTitle = currentChild.getName() + " " + currentChild.getSurname();
             viewToShow = kidInfoContainer;
             viewToHide = parentInfoContainer;
         } else if (kidInfoContainer.getVisibility() == View.VISIBLE) {
@@ -174,20 +209,11 @@ public class ChildrenFragment extends MyFragment {
         ViewDriver.hideView(viewToHide, R.anim.hide_right_animation, context);
     }
 
-    public void showKidInfo(Kid kid) {
-        currentKid = kid;
+    public void showKidInfo(Child child) {
+        childrenViewModel.requestSingleChild(authHeader, child.getChildId());
+        currentChild = child;
         kidInfoSv.scrollTo(0, kidInfoSv.getTop());
-        Glide.with(context).load(kid.getPhotoUrl()).into(kidPhoto);
-        setActionBarTitle(kid.getName() + " " + kid.getSurname());
-        kidNameContent.setText(kid.getName());
-        kidPatronymicContent.setText(kid.getPatronymic());
-        kidSurnameContent.setText(kid.getSurname());
-        kidAgeContent.setText(kid.getAge());
-        kidLockerContent.setText(String.valueOf(kid.getLocker()));
-        kidBloodTypeContent.setText(kid.getBloodType());
-        inviteCodeContent.setText(String.valueOf(kid.getInvite()));
-        parentsRecyclerView.setAdapter(new ParentsRecyclerViewAdapter(kid, this));
-        parentsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        setChildOptions(child);
         setBackBtnState(true);
         ViewDriver.toggleChildViewsEnable(kidInfoContainer, true);
         Animation animation = ViewDriver.showView(kidInfoContainer, R.anim.show_right_animation, context);
@@ -198,24 +224,52 @@ public class ChildrenFragment extends MyFragment {
             }
 
             @Override
-            public void onAnimationStart(Animation animation) { }
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
-            public void onAnimationRepeat(Animation animation) { }
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
     }
 
-    public void showParentInfo(Parent parent, Kid kid) {
-        Glide.with(context).load(parent.getPhotoUrl()).into(parentPhoto);
+    private void setChildOptions(Child child) {
+//        Glide.with(context).load(child.getPhotoLink()).into(kidPhoto);
+        setActionBarTitle(child.getName() + " " + child.getSurname());
+        kidNameContent.setText(child.getName());
+        kidPatronymicContent.setText(child.getPatronymic());
+        kidSurnameContent.setText(child.getSurname());
+
+        String ageStr;
+        Integer age = child.getAge();
+        if (age == null) {
+            ageStr = getString(R.string.some_field_is_null);
+        } else {
+            ageStr = String.valueOf(age);
+        }
+        kidAgeContent.setText(ageStr);
+
+        String lockerNum = child.getLockerNum();
+        if (lockerNum == null || lockerNum.equals("")) {
+            lockerNum = getString(R.string.some_field_is_null);
+        }
+        kidLockerContent.setText(lockerNum);
+
+        String bloodType = child.getBloodType();
+        if (bloodType == null || bloodType.equals("")) {
+            bloodType = getString(R.string.some_field_is_null);
+        }
+        kidBloodTypeContent.setText(bloodType);
+
+        inviteCodeContent.setText(child.getChildId());
+        parentsRecyclerView.setAdapter(new ParentsRecyclerViewAdapter(child, this));
+        parentsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+    }
+
+    public void showParentInfo(Parent parent, Child child) {
+//        Glide.with(context).load(parent.getPhotoUrl()).into(parentPhoto);
         parentInfoSv.scrollTo(0, parentInfoSv.getTop());
-        setActionBarTitle(parent.getName() + " " + parent.getSurname());
-        parentNameContent.setText(parent.getName());
-        parentPatronymicContent.setText(parent.getPatronymic());
-        parentSurnameContent.setText(parent.getSurname());
-        parentRoleContent.setText(parent.getRole());
-        String kidFullName = kid.getName() + " " + kid.getPatronymic() + " " + kid.getSurname();
-        parentKidContent.setText(kidFullName);
-        parentPhoneNumContent.setText(parent.getPhoneNum());
+        setParentOptions(parent, child);
         Animation animation = ViewDriver.showView(parentInfoContainer, R.anim.show_right_animation, context);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -224,10 +278,28 @@ public class ChildrenFragment extends MyFragment {
             }
 
             @Override
-            public void onAnimationStart(Animation animation) { }
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
-            public void onAnimationRepeat(Animation animation) { }
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
+    }
+
+    private void setParentOptions(Parent parent, Child child) {
+        setActionBarTitle(parent.getName() + " " + parent.getSurname());
+        parentNameContent.setText(parent.getName());
+        parentPatronymicContent.setText(parent.getPatronymic());
+        parentSurnameContent.setText(parent.getSurname());
+        parentRoleContent.setText(parent.getRelationDegree());
+        String kidFullName = child.getName() + " " + child.getPatronymic() + " " + child.getSurname();
+        parentKidContent.setText(kidFullName);
+        parentPhoneNumContent.setText(String.valueOf(parent.getPhone()));
+    }
+
+    public void setSelectedPicture(Uri selectedPictureUri) {
+        this.selectedPictureUri = selectedPictureUri;
+        kidPhoto.setImageURI(selectedPictureUri);
     }
 }

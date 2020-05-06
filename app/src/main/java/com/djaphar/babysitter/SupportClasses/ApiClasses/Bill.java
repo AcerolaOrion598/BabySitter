@@ -3,14 +3,14 @@ package com.djaphar.babysitter.SupportClasses.ApiClasses;
 public class Bill {
 
     private String theme;
-    private Kid kid;
+    private Child child;
     private Boolean status;
     private Float price;
     private Integer id;
 
-    public Bill(String theme, Kid kid, Boolean status, Float price, Integer id) {
+    public Bill(String theme, Child child, Boolean status, Float price, Integer id) {
         this.theme = theme;
-        this.kid = kid;
+        this.child = child;
         this.status = status;
         this.price = price;
         this.id = id;
@@ -20,8 +20,8 @@ public class Bill {
         return theme;
     }
 
-    public Kid getKid() {
-        return kid;
+    public Child getChild() {
+        return child;
     }
 
     public Boolean getStatus() {
@@ -40,8 +40,8 @@ public class Bill {
         this.theme = theme;
     }
 
-    public void setKid(Kid kid) {
-        this.kid = kid;
+    public void setChild(Child child) {
+        this.child = child;
     }
 
     public void setStatus(Boolean status) {

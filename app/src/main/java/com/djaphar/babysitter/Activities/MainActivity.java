@@ -2,13 +2,16 @@ package com.djaphar.babysitter.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.TextView;
 
+import com.djaphar.babysitter.Fragments.ChildrenFragment;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.MyFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -18,6 +21,7 @@ import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final static int SELECT_PICTURE_ID = 1;
     private TextView actionBarTitle, backBtn;
 
     @Override
@@ -57,6 +61,22 @@ public class MainActivity extends AppCompatActivity {
         currentFragment.backWasPressed();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SELECT_PICTURE_ID && resultCode == RESULT_OK && data != null) {
+            ChildrenFragment childrenFragment = null;
+            NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            if (navHostFragment != null) {
+                childrenFragment = (ChildrenFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
+            }
+            if (childrenFragment == null) {
+                return;
+            }
+            childrenFragment.setSelectedPicture(data.getData());
+        }
+    }
+
     public void setActionBarTitle(String title) {
         actionBarTitle.setText(title);
     }
@@ -67,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         backBtn.setVisibility(View.GONE);
+    }
+
+    public void selectPicture() {
+        startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), SELECT_PICTURE_ID);
     }
 
     public void logout() {

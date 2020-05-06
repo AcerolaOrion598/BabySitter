@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.djaphar.babysitter.Fragments.EventFragment;
 import com.djaphar.babysitter.R;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Meal;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Food;
 
 import java.util.ArrayList;
 
@@ -19,13 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MealDialogRecyclerViewAdapter extends RecyclerView.Adapter<MealDialogRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Meal> meals, checkedMeals;
+    private ArrayList<Food> foods, checkedFoods;
     private EventFragment eventFragment;
     private boolean denied;
 
-    public MealDialogRecyclerViewAdapter(ArrayList<Meal> meals, ArrayList<Meal> checkedMeals, EventFragment eventFragment, boolean denied) {
-        this.meals = meals;
-        this.checkedMeals = checkedMeals;
+    public MealDialogRecyclerViewAdapter(ArrayList<Food> foods, ArrayList<Food> checkedFoods, EventFragment eventFragment, boolean denied) {
+        this.foods = foods;
+        this.checkedFoods = checkedFoods;
         this.eventFragment = eventFragment;
         this.denied = denied;
     }
@@ -37,25 +37,25 @@ public class MealDialogRecyclerViewAdapter extends RecyclerView.Adapter<MealDial
         View view = LayoutInflater.from(context).inflate(R.layout.meal_dialog_list, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.mealFoodCb.setOnCheckedChangeListener((compoundButton, checked) ->
-                eventFragment.setCheckedFood(meals.get(viewHolder.getAdapterPosition()), checked, denied));
+                eventFragment.setCheckedFood(foods.get(viewHolder.getAdapterPosition()), checked, denied));
         viewHolder.parentLayout.setOnClickListener(lView -> viewHolder.mealFoodCb.performClick());
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Meal meal = meals.get(position);
-        for (Meal checkedMeal : checkedMeals) {
-            if (meal.getFoodName().equals(checkedMeal.getFoodName())) {
+        Food food = foods.get(position);
+        for (Food checkedFood : checkedFoods) {
+            if (food.getName().equals(checkedFood.getName())) {
                 holder.mealFoodCb.setChecked(true);
             }
         }
-        holder.mealFoodName.setText(meal.getFoodName());
+        holder.mealFoodName.setText(food.getName());
     }
 
     @Override
     public int getItemCount() {
-        return meals.size();
+        return foods.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

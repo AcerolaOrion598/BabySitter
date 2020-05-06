@@ -2,15 +2,16 @@ package com.djaphar.babysitter.SupportClasses.ApiClasses;
 
 public class Parent {
 
-    private String name, patronymic, surname, role, phoneNum, photoUrl;
+    private String name, patronymic, surname, relation_degree, photo_link;
+    private Integer phone;
 
-    public Parent(String name, String patronymic, String surname, String role, String phoneNum, String photoUrl) {
+    public Parent(String name, String patronymic, String surname, String relation_degree, String photo_link, Integer phone) {
         this.name = name;
         this.patronymic = patronymic;
         this.surname = surname;
-        this.role = role;
-        this.phoneNum = phoneNum;
-        this.photoUrl = photoUrl;
+        this.relation_degree = relation_degree;
+        this.photo_link = photo_link;
+        this.phone = phone;
     }
 
     public String getName() {
@@ -25,16 +26,16 @@ public class Parent {
         return surname;
     }
 
-    public String getRole() {
-        return role;
+    public String getRelationDegree() {
+        return relation_degree;
     }
 
-    public String getPhoneNum() {
-        return phoneNum;
+    public String getPhotoLink() {
+        return photo_link;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public Integer getPhone() {
+        return phone;
     }
 
     public void setName(String name) {
@@ -49,15 +50,15 @@ public class Parent {
         this.surname = surname;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRelationDegree(String relation_degree) {
+        this.relation_degree = relation_degree;
     }
 
-    public void setPhoneNum(String phoneNum) {
-        this.phoneNum = phoneNum;
+    public void setPhotoLink(String photo_link) {
+        this.photo_link = photo_link;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setPhone(Integer phone) {
+        this.phone = phone;
     }
 }

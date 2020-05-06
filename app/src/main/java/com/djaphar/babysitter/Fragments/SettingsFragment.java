@@ -14,12 +14,12 @@ import android.widget.TextView;
 import com.djaphar.babysitter.Activities.MainActivity;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.Adapters.MealRecyclerViewAdapter;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Meal;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Food;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.babysitter.ViewModels.SettingsViewModel;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,7 +37,7 @@ public class SettingsFragment extends MyFragment {
     private ConstraintLayout settingsContainer, mealsContainer;
     private TextView logoutTv, mealListTv;
     private ImageButton newMealBtn;
-    private ArrayList<Meal> meals;
+    private HashMap<String, String> authHeader = new HashMap<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
@@ -63,21 +63,23 @@ public class SettingsFragment extends MyFragment {
 
         settingsViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
+                authHeader.put(getString(R.string.auth_header_key), user.getToken_type() + " " + user.getAccess_token());
                 return;
             }
             mainActivity.logout();
         });
 
-        settingsViewModel.getMeals().observe(getViewLifecycleOwner(), meals -> {
-            if (meals == null) {
+        settingsViewModel.getFoods().observe(getViewLifecycleOwner(), foods -> {
+            if (foods == null) {
                 return;
             }
-            this.meals = meals;
+            mealRecyclerView.setAdapter(new MealRecyclerViewAdapter(foods, this));
+            mealRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
 
         logoutTv.setOnClickListener(lView -> showStandardDialog(getString(R.string.logout_text), getString(R.string.logout_message), null));
 
-        mealListTv.setOnClickListener(lView -> showMealsContainer());
+        mealListTv.setOnClickListener(lView -> showFoodsContainer());
 
         newMealBtn.setOnClickListener(lView -> {
             View inflatedView = View.inflate(context, R.layout.main_dialog, null);
@@ -114,13 +116,12 @@ public class SettingsFragment extends MyFragment {
         ViewDriver.hideView(mealsContainer, R.anim.hide_right_animation, context);
     }
 
-    public void deleteMeal(Meal meal) {
-        showStandardDialog(getString(R.string.delete_meal_title), getString(R.string.delete_meal_message), meal);
+    public void deleteMeal(Food food) {
+        showStandardDialog(getString(R.string.delete_meal_title), getString(R.string.delete_meal_message), food);
     }
 
-    private void showMealsContainer() {
-        mealRecyclerView.setAdapter(new MealRecyclerViewAdapter(meals, this));
-        mealRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+    private void showFoodsContainer() {
+        settingsViewModel.requestMyFoods(authHeader);
         setActionBarTitle(getString(R.string.meal_list_tv_text));
         setBackBtnState(true);
         ViewDriver.toggleChildViewsEnable(mealsContainer, true);
@@ -138,13 +139,13 @@ public class SettingsFragment extends MyFragment {
         });
     }
 
-    private void showStandardDialog(String title, String message, Meal meal) {
+    private void showStandardDialog(String title, String message, Food food) {
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(message)
                 .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
                 .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
-                    if (meal == null) {
+                    if (food == null) {
                         settingsViewModel.logout();
                     } else {
 

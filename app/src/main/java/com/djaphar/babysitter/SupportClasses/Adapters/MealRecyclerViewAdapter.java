@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.djaphar.babysitter.Fragments.SettingsFragment;
 import com.djaphar.babysitter.R;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Meal;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Food;
 
 import java.util.ArrayList;
 
@@ -17,11 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Meal> meals;
+    private ArrayList<Food> foods;
     private SettingsFragment settingsFragment;
 
-    public MealRecyclerViewAdapter(ArrayList<Meal> meals, SettingsFragment settingsFragment) {
-        this.meals = meals;
+    public MealRecyclerViewAdapter(ArrayList<Food> foods, SettingsFragment settingsFragment) {
+        this.foods = foods;
         this.settingsFragment = settingsFragment;
     }
 
@@ -31,13 +31,13 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
         final Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.meal_list, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.mealDeleteTv.setOnClickListener(lView -> settingsFragment.deleteMeal(meals.get(viewHolder.getAdapterPosition())));
+        viewHolder.mealDeleteTv.setOnClickListener(lView -> settingsFragment.deleteMeal(foods.get(viewHolder.getAdapterPosition())));
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.mealTv.setText(meals.get(position).getFoodName());
+        holder.mealTv.setText(foods.get(position).getName());
         if (position > 0) {
             holder.itemView.setBackground(settingsFragment.getResources().getDrawable(R.drawable.thin_top_border));
         }
@@ -45,7 +45,7 @@ public class MealRecyclerViewAdapter extends RecyclerView.Adapter<MealRecyclerVi
 
     @Override
     public int getItemCount() {
-        return meals.size();
+        return foods.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

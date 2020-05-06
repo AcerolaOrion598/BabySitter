@@ -32,11 +32,11 @@ public class User {
         return token_type;
     }
 
-    public void setAccess_token(@NonNull String access_token) {
+    public void setAccessToken(@NonNull String access_token) {
         this.access_token = access_token;
     }
 
-    public void setToken_type(@NonNull String token_type) {
+    public void setTokenType(@NonNull String token_type) {
         this.token_type = token_type;
     }
 }

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.djaphar.babysitter.Fragments.ChildrenFragment;
 import com.djaphar.babysitter.R;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Kid;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
 
 import java.util.ArrayList;
 
@@ -20,11 +20,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChildrenRecyclerViewAdapter extends RecyclerView.Adapter<ChildrenRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Kid> kids;
+    private ArrayList<Child> children;
     private ChildrenFragment childrenFragment;
 
-    public ChildrenRecyclerViewAdapter(ArrayList<Kid> kids, ChildrenFragment childrenFragment) {
-        this.kids = kids;
+    public ChildrenRecyclerViewAdapter(ArrayList<Child> children, ChildrenFragment childrenFragment) {
+        this.children = children;
         this.childrenFragment = childrenFragment;
     }
 
@@ -34,21 +34,21 @@ public class ChildrenRecyclerViewAdapter extends RecyclerView.Adapter<ChildrenRe
         final Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.children_list, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.parentLayout.setOnClickListener(lView -> childrenFragment.showKidInfo(kids.get(viewHolder.getAdapterPosition())));
+        viewHolder.parentLayout.setOnClickListener(lView -> childrenFragment.showKidInfo(children.get(viewHolder.getAdapterPosition())));
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Kid kid = kids.get(position);
-        Glide.with(childrenFragment).load(kid.getPhotoUrl()).into(holder.childrenListKidPhoto);
-        String fullName = kid.getName() + " " + kid.getSurname();
+        Child child = children.get(position);
+        Glide.with(childrenFragment).load(child.getPhotoLink()).into(holder.childrenListKidPhoto);
+        String fullName = child.getName() + " " + child.getSurname();
         holder.kidFullName.setText(fullName);
     }
 
     @Override
     public int getItemCount() {
-        return kids.size();
+        return children.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

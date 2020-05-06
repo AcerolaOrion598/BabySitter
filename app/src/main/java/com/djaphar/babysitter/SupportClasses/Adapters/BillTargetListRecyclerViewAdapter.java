@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.djaphar.babysitter.Fragments.BillingFragment;
 import com.djaphar.babysitter.R;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Kid;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
 
 import java.util.ArrayList;
 
@@ -18,11 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class BillTargetListRecyclerViewAdapter extends RecyclerView.Adapter<BillTargetListRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Kid> kids;
+    private ArrayList<Child> children;
     private BillingFragment billingFragment;
 
-    public BillTargetListRecyclerViewAdapter(ArrayList<Kid> kids, BillingFragment billingFragment) {
-        this.kids = kids;
+    public BillTargetListRecyclerViewAdapter(ArrayList<Child> children, BillingFragment billingFragment) {
+        this.children = children;
         this.billingFragment = billingFragment;
     }
 
@@ -32,20 +32,20 @@ public class BillTargetListRecyclerViewAdapter extends RecyclerView.Adapter<Bill
         final Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.bill_target_list, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.parentLayout.setOnClickListener(lView -> billingFragment.setBillTarget(kids.get(viewHolder.getAdapterPosition())));
+        viewHolder.parentLayout.setOnClickListener(lView -> billingFragment.setBillTarget(children.get(viewHolder.getAdapterPosition())));
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Kid kid = kids.get(position);
-        String fullName = kid.getName() + " " + kid.getSurname();
+        Child child = children.get(position);
+        String fullName = child.getName() + " " + child.getSurname();
         holder.billTargetListTv.setText(fullName);
     }
 
     @Override
     public int getItemCount() {
-        return kids.size();
+        return children.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

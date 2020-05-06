@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.djaphar.babysitter.Fragments.EventFragment;
 import com.djaphar.babysitter.R;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Kid;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
 
 import java.util.ArrayList;
 
@@ -18,14 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class EventChildrenRecyclerViewAdapter extends RecyclerView.Adapter<EventChildrenRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Kid> kids;
+    private ArrayList<Child> children;
     private EventFragment eventFragment;
 
-    public EventChildrenRecyclerViewAdapter(ArrayList<Kid> kids, EventFragment eventFragment) {
-        this.kids = kids;
+    public EventChildrenRecyclerViewAdapter(ArrayList<Child> children, EventFragment eventFragment) {
+        this.children = children;
         this.eventFragment = eventFragment;
-        if (kids.size() == 0) {
-            kids.add(new Kid(eventFragment.getString(R.string.kids_null_text), null, null, null,
+        if (children.size() == 0) {
+            children.add(new Child(eventFragment.getString(R.string.kids_null_text), null, null, null,
                     null, null, null, null, null));
         }
     }
@@ -36,23 +36,23 @@ public class EventChildrenRecyclerViewAdapter extends RecyclerView.Adapter<Event
         final Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.event_children_list, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
-        if (kids.get(0).getSurname() != null) {
-            viewHolder.parentLayout.setOnClickListener(lView -> eventFragment.showKidEvent(kids.get(viewHolder.getAdapterPosition())));
+        if (children.get(0).getSurname() != null) {
+            viewHolder.parentLayout.setOnClickListener(lView -> eventFragment.showKidEvent(children.get(viewHolder.getAdapterPosition())));
         }
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Kid kid = kids.get(position);
+        Child child = children.get(position);
         if (position > 0) {
             holder.itemView.setBackground(eventFragment.getResources().getDrawable(R.drawable.thin_top_border));
         }
-        String fullName = kid.getName();
+        String fullName = child.getName();
         int color;
-        if (kid.getSurname() != null) {
+        if (child.getSurname() != null) {
             color = eventFragment.getResources().getColor(R.color.colorBlack60);
-            fullName += " " + kid.getSurname();
+            fullName += " " + child.getSurname();
         } else {
             color = eventFragment.getResources().getColor(R.color.colorBlack30);
         }
@@ -62,7 +62,7 @@ public class EventChildrenRecyclerViewAdapter extends RecyclerView.Adapter<Event
 
     @Override
     public int getItemCount() {
-        return kids.size();
+        return children.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

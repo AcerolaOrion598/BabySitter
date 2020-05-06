@@ -60,4 +60,6 @@
     <string name="login_text">Логин</string>
     <string name="password_text">Пароль</string>
     <string name="login_btn_text">Войти</string>
+    <string name="auth_header_key">Authorization</string>
+    <string name="some_field_is_null">Н/д</string>
 </resources>

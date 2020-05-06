@@ -18,7 +18,7 @@ import com.djaphar.babysitter.SupportClasses.Adapters.BillTargetListRecyclerView
 import com.djaphar.babysitter.SupportClasses.Adapters.BillingRecyclerViewAdapter;
 import com.djaphar.babysitter.SupportClasses.Adapters.MainDialog;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Bill;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Kid;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.babysitter.ViewModels.BillingViewModel;
@@ -46,7 +46,7 @@ public class BillingFragment extends MyFragment {
     private Button billDeleteBtn;
     private ImageButton newBillBtn;
     private Bill currentBill;
-    private ArrayList<Kid> kids;
+    private ArrayList<Child> children;
     private AlertDialog billTargetDialog;
     private boolean firstOpened = true;
 
@@ -107,7 +107,7 @@ public class BillingFragment extends MyFragment {
             if (kids == null) {
                 return;
             }
-            this.kids = kids;
+            this.children = kids;
         });
 
         billThemeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_theme_title_text), billThemeContent.getText().toString(),
@@ -118,11 +118,11 @@ public class BillingFragment extends MyFragment {
         billTargetContainer.setOnClickListener(lView -> {
             View inflatedView = View.inflate(context, R.layout.recycler_kid_dialog, null);
             RecyclerView billTargetRecyclerView = inflatedView.findViewById(R.id.bill_target_recycler_view);
-            billTargetRecyclerView.setAdapter(new BillTargetListRecyclerViewAdapter(kids, this));
+            billTargetRecyclerView.setAdapter(new BillTargetListRecyclerViewAdapter(children, this));
             billTargetRecyclerView.setNestedScrollingEnabled(false);
             billTargetRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             ConstraintLayout billTargetDefaultContainer = inflatedView.findViewById(R.id.bill_target_default_container);
-            billTargetDefaultContainer.setOnClickListener(container -> setBillTarget(new Kid(getString(R.string.billing_target_default_text),
+            billTargetDefaultContainer.setOnClickListener(container -> setBillTarget(new Child(getString(R.string.billing_target_default_text),
                     null, "", null, null, null, null, null, null)));
             billTargetDialog = new AlertDialog.Builder(mainActivity)
                     .setView(inflatedView)
@@ -182,8 +182,8 @@ public class BillingFragment extends MyFragment {
         ViewDriver.hideView(billContainer, R.anim.hide_right_animation, context);
     }
 
-    public void setBillTarget(Kid kid) {
-        String fullName = kid.getName() + " " + kid.getSurname();
+    public void setBillTarget(Child child) {
+        String fullName = child.getName() + " " + child.getSurname();
         billTargetContent.setText(fullName);
         billTargetDialog.cancel();
     }
@@ -207,9 +207,9 @@ public class BillingFragment extends MyFragment {
         }
 
         String target = getString(R.string.billing_target_default_text);
-        Kid kid = bill.getKid();
-        if (kid != null) {
-            target = kid.getName() + " " + kid.getSurname();
+        Child child = bill.getChild();
+        if (child != null) {
+            target = child.getName() + " " + child.getSurname();
         }
         billTargetContent.setText(target);
 

@@ -20,8 +20,8 @@ import com.djaphar.babysitter.Activities.MainActivity;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.Adapters.EventChildrenRecyclerViewAdapter;
 import com.djaphar.babysitter.SupportClasses.Adapters.MealDialogRecyclerViewAdapter;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Kid;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Meal;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Food;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.babysitter.ViewModels.EventViewModel;
@@ -29,6 +29,7 @@ import com.djaphar.babysitter.ViewModels.EventViewModel;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,9 +51,10 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
     private TextView eventDateContent, scheduleArriveContent, scheduleLeaveContent, sleepStartContent,
             sleepEndContent, eatingFoodContent, eatingDenialContent;
     private Calendar calendar;
-    private ArrayList<Meal> meals, selectedMeals, tempSelectedMeals = new ArrayList<>(), deniedMeals, tempDeniedMeals = new ArrayList<>();
+    private ArrayList<Food> foods, selectedFoods, tempSelectedFoods = new ArrayList<>(), deniedFoods, tempDeniedFoods = new ArrayList<>();
     private int curYear, curMonth, curDayOfMonth;
     private Boolean sleepStart, arrive;
+    private HashMap<String, String> authHeader = new HashMap<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
@@ -92,27 +94,36 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        eventViewModel.getKids().observe(getViewLifecycleOwner(), kids -> {
-            if (kids == null) {
+        eventViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            if (user == null) {
                 return;
             }
-            eventChildrenRecyclerView.setAdapter(new EventChildrenRecyclerViewAdapter(kids, this));
+            authHeader.put(getString(R.string.auth_header_key), user.getToken_type() + " " + user.getAccess_token());
+            eventViewModel.requestChildrenList(authHeader);
+            eventViewModel.requestMyFoods(authHeader);
+        });
+
+        eventViewModel.getChildren().observe(getViewLifecycleOwner(), children -> {
+            if (children == null) {
+                return;
+            }
+            eventChildrenRecyclerView.setAdapter(new EventChildrenRecyclerViewAdapter(children, this));
             eventChildrenRecyclerView.setNestedScrollingEnabled(false);
             eventChildrenRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         });
 
-        eventViewModel.getMeals().observe(getViewLifecycleOwner(), meals -> {
-            if (meals == null) {
+        eventViewModel.getFoods().observe(getViewLifecycleOwner(), foods -> {
+            if (foods == null) {
                 return;
             }
-            this.meals = meals;
+            this.foods = foods;
         });
 
         eventViewModel.getSelectedMeals().observe(getViewLifecycleOwner(), selectedMeals -> {
             if (selectedMeals == null) {
                 return;
             }
-            this.selectedMeals = selectedMeals;
+            this.selectedFoods = selectedMeals;
             setMealsTv(selectedMeals);
         });
 
@@ -120,7 +131,7 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
             if (deniedMeals == null) {
                 return;
             }
-            this.deniedMeals = deniedMeals;
+            this.deniedFoods = deniedMeals;
             setMealsTv(deniedMeals);
         });
 
@@ -160,54 +171,54 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         });
 
         eatingFoodContainer.setOnClickListener(lView -> {
-            if (meals.size() == 0) {
+            if (foods.size() == 0) {
                 return;
             }
             View inflatedView = View.inflate(context, R.layout.recycler_meal_dialog, null);
             RecyclerView mealDialogRecyclerView = inflatedView.findViewById(R.id.meal_dialog_recycler_view);
-            mealDialogRecyclerView.setAdapter(new MealDialogRecyclerViewAdapter(meals, selectedMeals, this, false));
+            mealDialogRecyclerView.setAdapter(new MealDialogRecyclerViewAdapter(foods, selectedFoods, this, false));
             mealDialogRecyclerView.setNestedScrollingEnabled(false);
             mealDialogRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             new AlertDialog.Builder(mainActivity)
                     .setView(inflatedView)
                     .setTitle(R.string.eating_food_text)
                     .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> {
-                        tempSelectedMeals.clear();
+                        tempSelectedFoods.clear();
                         dialogInterface.cancel();
                     })
                     .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
-                        selectedMeals.clear();
-                        selectedMeals.addAll(tempSelectedMeals.subList(0, tempSelectedMeals.size()));
-                        tempSelectedMeals.clear();
+                        selectedFoods.clear();
+                        selectedFoods.addAll(tempSelectedFoods.subList(0, tempSelectedFoods.size()));
+                        tempSelectedFoods.clear();
                         rewriteDeniedMeals();
-                        setMealsTv(selectedMeals);
-                        setMealsTv(deniedMeals);
+                        setMealsTv(selectedFoods);
+                        setMealsTv(deniedFoods);
                     })
                     .create()
                     .show();
         });
 
         eatingDenialContainer.setOnClickListener(lView -> {
-            if (selectedMeals.size() == 0) {
+            if (selectedFoods.size() == 0) {
                 return;
             }
             View inflatedView = View.inflate(context, R.layout.recycler_meal_dialog, null);
             RecyclerView mealDialogRecyclerView = inflatedView.findViewById(R.id.meal_dialog_recycler_view);
-            mealDialogRecyclerView.setAdapter(new MealDialogRecyclerViewAdapter(selectedMeals, deniedMeals, this, true));
+            mealDialogRecyclerView.setAdapter(new MealDialogRecyclerViewAdapter(selectedFoods, deniedFoods, this, true));
             mealDialogRecyclerView.setNestedScrollingEnabled(false);
             mealDialogRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             new AlertDialog.Builder(mainActivity)
                     .setView(inflatedView)
                     .setTitle(R.string.eating_denial_text)
                     .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> {
-                        tempDeniedMeals.clear();
+                        tempDeniedFoods.clear();
                         dialogInterface.cancel();
                     })
                     .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
-                        deniedMeals.clear();
-                        deniedMeals.addAll(tempDeniedMeals.subList(0, tempDeniedMeals.size()));
-                        tempDeniedMeals.clear();
-                        setMealsTv(deniedMeals);
+                        deniedFoods.clear();
+                        deniedFoods.addAll(tempDeniedFoods.subList(0, tempDeniedFoods.size()));
+                        tempDeniedFoods.clear();
+                        setMealsTv(deniedFoods);
                     })
                     .create()
                     .show();
@@ -234,10 +245,10 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         ViewDriver.hideView(eventContainer, R.anim.hide_right_animation, context);
     }
 
-    public void showKidEvent(Kid kid) {
+    public void showKidEvent(Child child) {
         setCalendarOptions(curYear, curMonth, curDayOfMonth);
         eventDateContent.setText(DateFormat.getDateInstance().format(calendar.getTime()));
-        String fullName = kid.getName() + " " + kid.getSurname();
+        String fullName = child.getName() + " " + child.getSurname();
         setActionBarTitle(fullName);
         setBackBtnState(true);
         eventSv.scrollTo(0, eventSv.getTop());
@@ -286,36 +297,36 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         }
     }
 
-    public void setCheckedFood(Meal meal, boolean checked, boolean denied) {
+    public void setCheckedFood(Food food, boolean checked, boolean denied) {
         if (denied) {
             if (checked) {
-                tempDeniedMeals.add(meal);
+                tempDeniedFoods.add(food);
             } else {
-                tempDeniedMeals.remove(meal);
+                tempDeniedFoods.remove(food);
             }
         } else {
             if (checked) {
-                tempSelectedMeals.add(meal);
+                tempSelectedFoods.add(food);
             } else {
-                tempSelectedMeals.remove(meal);
+                tempSelectedFoods.remove(food);
             }
         }
     }
 
-    private void setMealsTv(ArrayList<Meal> meals) {
+    private void setMealsTv(ArrayList<Food> foods) {
         StringBuilder mealsString = new StringBuilder();
-        if (meals.size() == 0) {
-            mealsString.append("Н/д");
+        if (foods.size() == 0) {
+            mealsString.append(getString(R.string.some_field_is_null));
         }
 
-        for (int i = 0; i < meals.size(); i++) {
-            mealsString.append(meals.get(i).getFoodName());
-            if (i != meals.size() - 1) {
+        for (int i = 0; i < foods.size(); i++) {
+            mealsString.append(foods.get(i).getName());
+            if (i != foods.size() - 1) {
                 mealsString.append("\n");
             }
         }
 
-        if (meals == selectedMeals) {
+        if (foods == selectedFoods) {
             eatingFoodContent.setText(mealsString);
         } else {
             eatingDenialContent.setText(mealsString);
@@ -323,11 +334,11 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
     }
 
     private void rewriteDeniedMeals() {
-        ArrayList<Meal> t = new ArrayList<>(deniedMeals.subList(0, deniedMeals.size()));
-        for (Meal deniedMeal : deniedMeals) {
+        ArrayList<Food> t = new ArrayList<>(deniedFoods.subList(0, deniedFoods.size()));
+        for (Food deniedFood : deniedFoods) {
             int i = 0;
-            for (Meal selectedMeal : selectedMeals) {
-                if (deniedMeal.getFoodName().equals(selectedMeal.getFoodName())) {
+            for (Food selectedFood : selectedFoods) {
+                if (deniedFood.getName().equals(selectedFood.getName())) {
                     i++;
                     break;
                 }
@@ -335,9 +346,9 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
             if (i > 0) {
                 continue;
             }
-            t.remove(deniedMeal);
+            t.remove(deniedFood);
         }
-        deniedMeals.clear();
-        deniedMeals.addAll(t.subList(0, t.size()));
+        deniedFoods.clear();
+        deniedFoods.addAll(t.subList(0, t.size()));
     }
 }

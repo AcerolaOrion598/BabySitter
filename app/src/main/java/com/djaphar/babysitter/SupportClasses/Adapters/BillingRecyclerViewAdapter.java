@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.djaphar.babysitter.Fragments.BillingFragment;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Bill;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Kid;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.ViewDriver;
 
 import java.util.ArrayList;
@@ -63,10 +63,10 @@ public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecy
             priceStr = String.format(Locale.US, "%.2f", price) + "р.";
         }
         holder.billingListPriceTv.setText(priceStr);
-        Kid kid = bill.getKid();
+        Child child = bill.getChild();
         String target = billingFragment.getString(R.string.billing_target_default_text);
-        if (kid != null) {
-            target = kid.getName() + " " + kid.getSurname();
+        if (child != null) {
+            target = child.getName() + " " + child.getSurname();
         }
         holder.billingListTargetTv.setText(target);
         ViewDriver.setStatusTvOptions(holder.billingListStatusTv, billingFragment.getResources(), bill.getStatus());

@@ -15,9 +15,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 public class AuthActivity extends AppCompatActivity {
 
-    private AuthViewModel authViewModel;
-    private EditText loginEd, passwordEd;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,11 +28,11 @@ public class AuthActivity extends AppCompatActivity {
             actionBarTitle.setText(R.string.login_title);
         }
 
-        loginEd = findViewById(R.id.login_ed);
-        passwordEd = findViewById(R.id.password_ed);
+        EditText loginEd = findViewById(R.id.login_ed);
+        EditText passwordEd = findViewById(R.id.password_ed);
         Button loginBtn = findViewById(R.id.login_btn);
 
-        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        AuthViewModel authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         authViewModel.getUser().observe(this, user -> {
             if (user == null) {
                 return;
