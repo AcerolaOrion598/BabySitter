@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.djaphar.babysitter.Activities.MainActivity;
 import com.djaphar.babysitter.R;
+import com.djaphar.babysitter.SupportClasses.Adapters.MainDialog;
 import com.djaphar.babysitter.SupportClasses.Adapters.MealRecyclerViewAdapter;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Food;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.MyFragment;
@@ -81,19 +81,8 @@ public class SettingsFragment extends MyFragment {
 
         mealListTv.setOnClickListener(lView -> showFoodsContainer());
 
-        newMealBtn.setOnClickListener(lView -> {
-            View inflatedView = View.inflate(context, R.layout.main_dialog, null);
-            EditText fieldChangeEd = inflatedView.findViewById(R.id.field_change_ed);
-            fieldChangeEd.setHint(R.string.new_meal_text);
-            new AlertDialog.Builder(context)
-                    .setView(inflatedView)
-                    .setTitle(R.string.new_meal_title)
-                    .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
-                    .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
-
-                    })
-                    .show();
-        });
+        newMealBtn.setOnClickListener(lView -> new MainDialog(getString(R.string.new_meal_title), "", lView)
+                .show(getParentFragmentManager(), "dialog"));
     }
 
     private void setActionBarTitle(String title) {
@@ -114,6 +103,12 @@ public class SettingsFragment extends MyFragment {
         setBackBtnState(false);
         ViewDriver.toggleChildViewsEnable(mealsContainer, false);
         ViewDriver.hideView(mealsContainer, R.anim.hide_right_animation, context);
+    }
+
+    public void returnFieldValue(String fieldValue, View calledView) {
+        if (calledView.getId() == R.id.new_meal_btn) {
+            settingsViewModel.requestCreateFood(authHeader, new Food(null, fieldValue));
+        }
     }
 
     public void deleteMeal(Food food) {
@@ -148,7 +143,7 @@ public class SettingsFragment extends MyFragment {
                     if (food == null) {
                         settingsViewModel.logout();
                     } else {
-
+                        settingsViewModel.requestDeleteFood(authHeader, food.getFoodId());
                     }
                 })
                 .show();

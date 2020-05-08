@@ -7,6 +7,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -34,12 +35,21 @@ public interface MainApi {
     @PUT("children/{id}/")
     Call<Child> requestUpdateChild(@HeaderMap Map<String, String> headers, @Path("id") String id, @Body Child child);
 
-    @GET("foods")
-    Call<ArrayList<Food>> requestMyFoods(@HeaderMap Map<String, String> headers);
+    @DELETE("children/{id}")
+    Call<Void> requestDeleteChild(@HeaderMap Map<String, String> headers, @Path("id") String id);
 
     @GET("events")
     Call<Event> requestEvent(@HeaderMap Map<String, String> headers, @Query("child_id") String child_id, @Query("date") String date);
 
     @POST("events/")
     Call<Void> requestUpdateEvent(@HeaderMap Map<String, String> headers, @Body Event event);
+
+    @GET("foods")
+    Call<ArrayList<Food>> requestMyFoods(@HeaderMap Map<String, String> headers);
+
+    @POST("foods/")
+    Call<Void> requestCreateFood(@HeaderMap Map<String,String> headers, @Body Food food);
+
+    @DELETE("foods/{id}/")
+    Call<Void> requestDeleteFood(@HeaderMap Map<String, String> headers, @Path("id") String id);
 }

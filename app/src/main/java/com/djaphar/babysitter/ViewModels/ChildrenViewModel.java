@@ -68,6 +68,10 @@ public class ChildrenViewModel extends AndroidViewModel {
             @Override
             public void onResponse(@NonNull Call<Child> call, @NonNull Response<Child> response) {
                 if (!response.isSuccessful()) {
+                    if (response.code() == 404) {
+                        currentChildMutableLiveData.setValue(null);
+                        return;
+                    }
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -112,6 +116,24 @@ public class ChildrenViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<Child> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void requestDeleteChild(HashMap<String, String> headersMap, String childId) {
+        mainApi.requestDeleteChild(headersMap, childId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                requestSingleChild(headersMap, childId);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                 Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

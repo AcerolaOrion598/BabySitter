@@ -74,6 +74,42 @@ public class SettingsViewModel extends AndroidViewModel {
         });
     }
 
+    public void requestCreateFood(HashMap<String, String> headersMap, Food food) {
+        mainApi.requestCreateFood(headersMap, food).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                requestMyFoods(headersMap);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void requestDeleteFood(HashMap<String, String> headersMap, String foodId) {
+        mainApi.requestDeleteFood(headersMap, foodId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                requestMyFoods(headersMap);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public void logout() {
         LocalDataRoom.databaseWriteExecutor.execute(() -> dao.deleteUser());
     }

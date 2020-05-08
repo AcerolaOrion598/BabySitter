@@ -42,7 +42,8 @@ public class ChildrenFragment extends MyFragment {
     private Context context;
     private RecyclerView childrenRecyclerView, parentsRecyclerView;
     private ConstraintLayout kidInfoContainer, parentInfoContainer, childrenListContainer;
-    private LinearLayout kidNameContainer, kidPatronymicContainer, kidSurnameContainer, kidAgeContainer, kidLockerContainer, kidBloodTypeContainer;
+    private LinearLayout kidNameContainer, kidPatronymicContainer, kidSurnameContainer, kidAgeContainer,
+            kidLockerContainer, kidBloodTypeContainer, kidDeleteBtn;
     private ScrollView kidInfoSv, parentInfoSv;
     private TextView kidNameContent, kidPatronymicContent, kidSurnameContent, kidAgeContent, kidLockerContent, kidBloodTypeContent, inviteCodeContent,
             parentNameContent, parentPatronymicContent, parentSurnameContent, parentRoleContent, parentKidContent, parentPhoneNumContent;
@@ -67,6 +68,7 @@ public class ChildrenFragment extends MyFragment {
         kidAgeContainer = root.findViewById(R.id.kid_age_container);
         kidLockerContainer = root.findViewById(R.id.kid_locker_container);
         kidBloodTypeContainer = root.findViewById(R.id.kid_blood_type_container);
+        kidDeleteBtn = root.findViewById(R.id.kid_delete_btn);
         kidInfoSv = root.findViewById(R.id.kid_info_sv);
         parentInfoSv = root.findViewById(R.id.parent_info_sv);
         childrenListContainer = root.findViewById(R.id.children_list_container);
@@ -118,6 +120,8 @@ public class ChildrenFragment extends MyFragment {
 
         childrenViewModel.getCurrentChild().observe(getViewLifecycleOwner(), currentChild -> {
             if (currentChild == null) {
+                ViewDriver.toggleChildViewsEnable(kidInfoContainer, false);
+                ViewDriver.hideView(kidInfoContainer, R.anim.hide_right_animation, context);
                 return;
             }
             this.currentChild = currentChild;
@@ -136,6 +140,14 @@ public class ChildrenFragment extends MyFragment {
                 .show(getParentFragmentManager(), "dialog"));
         kidBloodTypeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_blood_type_title_text), currentChild.getBloodType(), lView)
                 .show(getParentFragmentManager(), "dialog"));
+
+        kidDeleteBtn.setOnClickListener(lView ->
+                new AlertDialog.Builder(mainActivity)
+                .setTitle(R.string.kid_delete_title)
+                .setMessage(R.string.kid_delete_message)
+                .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
+                .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> childrenViewModel.requestDeleteChild(authHeader, currentChild.getChildId()))
+                .show());
 
         newKidBtn.setOnClickListener(lView -> {
             View inflatedView = View.inflate(context, R.layout.new_kid_dialog, null);

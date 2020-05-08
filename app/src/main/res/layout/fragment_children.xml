@@ -385,6 +385,31 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/kid_delete_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/thin_top_border"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/screen_horizontal_padding"
+                    android:paddingEnd="@dimen/screen_horizontal_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/invite_code_container">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/info_row_vertical_margin"
+                        android:layout_marginBottom="@dimen/info_row_vertical_margin"
+                        android:fontFamily="@font/roboto"
+                        android:gravity="center"
+                        android:text="@string/delete_btn_text"
+                        android:textColor="@color/colorRed87"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>
