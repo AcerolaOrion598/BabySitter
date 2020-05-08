@@ -175,7 +175,6 @@
                             android:layout_weight="1"
                             android:fontFamily="@font/roboto_medium"
                             android:gravity="end"
-                            android:text="10:00"
                             android:textColor="@color/colorBlack87"
                             android:textSize="18sp" />
 
@@ -214,7 +213,6 @@
                             android:layout_weight="1"
                             android:fontFamily="@font/roboto_medium"
                             android:gravity="end"
-                            android:text="18:00"
                             android:textColor="@color/colorBlack87"
                             android:textSize="18sp" />
 
@@ -296,7 +294,6 @@
                             android:layout_weight="1"
                             android:fontFamily="@font/roboto_medium"
                             android:gravity="end"
-                            android:text="Завтрак"
                             android:textColor="@color/colorBlack87"
                             android:textSize="18sp" />
 
@@ -335,7 +332,6 @@
                             android:layout_weight="1"
                             android:fontFamily="@font/roboto_medium"
                             android:gravity="end"
-                            android:text="Солянка"
                             android:textColor="@color/colorBlack87"
                             android:textSize="18sp" />
 
@@ -374,7 +370,6 @@
                             android:layout_weight="1"
                             android:fontFamily="@font/roboto_medium"
                             android:gravity="end"
-                            android:text="Солянка"
                             android:textColor="@color/colorBlack87"
                             android:textSize="18sp" />
 
@@ -456,7 +451,6 @@
                             android:layout_weight="1"
                             android:fontFamily="@font/roboto_medium"
                             android:gravity="end"
-                            android:text="15:00"
                             android:textColor="@color/colorBlack87"
                             android:textSize="18sp" />
 
@@ -495,7 +489,6 @@
                             android:layout_weight="1"
                             android:fontFamily="@font/roboto_medium"
                             android:gravity="end"
-                            android:text="16:00"
                             android:textColor="@color/colorBlack87"
                             android:textSize="18sp" />
 

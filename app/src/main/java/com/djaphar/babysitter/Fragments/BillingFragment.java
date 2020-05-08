@@ -110,10 +110,10 @@ public class BillingFragment extends MyFragment {
             this.children = kids;
         });
 
-        billThemeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_theme_title_text), billThemeContent.getText().toString(),
-                billThemeContent).show(getParentFragmentManager(), "dialog"));
-        billPriceContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_price_title_text), billPriceContent.getText().toString(),
-                billPriceContent).show(getParentFragmentManager(), "dialog"));
+        billThemeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_theme_title_text), billThemeContent.getText().toString(), lView)
+                .show(getParentFragmentManager(), "dialog"));
+        billPriceContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_price_title_text), billPriceContent.getText().toString(), lView)
+                .show(getParentFragmentManager(), "dialog"));
 
         billTargetContainer.setOnClickListener(lView -> {
             View inflatedView = View.inflate(context, R.layout.recycler_kid_dialog, null);

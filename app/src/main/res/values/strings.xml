@@ -62,4 +62,9 @@
     <string name="login_btn_text">Войти</string>
     <string name="auth_header_key">Authorization</string>
     <string name="some_field_is_null">Н/д</string>
+    <string name="empty_input">Вы не указали значение!</string>
+    <string name="breakfast">Завтрак</string>
+    <string name="lunch">Обед</string>
+    <string name="snack">Полдник</string>
+    <string name="event_update_success">Событие сохранено!</string>
 </resources>

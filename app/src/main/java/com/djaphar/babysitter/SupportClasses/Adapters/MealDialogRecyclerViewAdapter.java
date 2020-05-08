@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.djaphar.babysitter.Fragments.EventFragment;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Food;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.Ration;
 
 import java.util.ArrayList;
 
@@ -19,11 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MealDialogRecyclerViewAdapter extends RecyclerView.Adapter<MealDialogRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Food> foods, checkedFoods;
+    private ArrayList<Food> foods;
+    private ArrayList<Ration> checkedFoods;
     private EventFragment eventFragment;
     private boolean denied;
 
-    public MealDialogRecyclerViewAdapter(ArrayList<Food> foods, ArrayList<Food> checkedFoods, EventFragment eventFragment, boolean denied) {
+    public MealDialogRecyclerViewAdapter(ArrayList<Food> foods, ArrayList<Ration> checkedFoods, EventFragment eventFragment, boolean denied) {
         this.foods = foods;
         this.checkedFoods = checkedFoods;
         this.eventFragment = eventFragment;
@@ -45,7 +47,7 @@ public class MealDialogRecyclerViewAdapter extends RecyclerView.Adapter<MealDial
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Food food = foods.get(position);
-        for (Food checkedFood : checkedFoods) {
+        for (Ration checkedFood : checkedFoods) {
             if (food.getName().equals(checkedFood.getName())) {
                 holder.mealFoodCb.setChecked(true);
             }

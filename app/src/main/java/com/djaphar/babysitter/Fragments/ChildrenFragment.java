@@ -121,20 +121,21 @@ public class ChildrenFragment extends MyFragment {
                 return;
             }
             this.currentChild = currentChild;
+            setChildOptions(currentChild);
         });
 
-        kidNameContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.name_title_text), currentChild.getName(),
-                kidNameContent).show(getParentFragmentManager(), "dialog"));
-        kidPatronymicContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.patronymic_title_text), currentChild.getPatronymic(),
-                kidPatronymicContent).show(getParentFragmentManager(), "dialog"));
-        kidSurnameContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.surname_title_text), currentChild.getSurname(),
-                kidSurnameContent).show(getParentFragmentManager(), "dialog"));
-        kidAgeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_age_title_text), String.valueOf(currentChild.getAge()),
-                kidAgeContent).show(getParentFragmentManager(), "dialog"));
-        kidLockerContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_locker_title_text), currentChild.getLockerNum(),
-                kidLockerContent).show(getParentFragmentManager(), "dialog"));
-        kidBloodTypeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_blood_type_title_text), currentChild.getBloodType(),
-                kidBloodTypeContent).show(getParentFragmentManager(), "dialog"));
+        kidNameContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.name_title_text), currentChild.getName(), lView)
+                .show(getParentFragmentManager(), "dialog"));
+        kidPatronymicContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.patronymic_title_text), currentChild.getPatronymic(), lView)
+                .show(getParentFragmentManager(), "dialog"));
+        kidSurnameContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.surname_title_text), currentChild.getSurname(), lView)
+                .show(getParentFragmentManager(), "dialog"));
+        kidAgeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_age_title_text), String.valueOf(currentChild.getAge()), lView)
+                .show(getParentFragmentManager(), "dialog"));
+        kidLockerContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_locker_title_text), currentChild.getLockerNum(), lView)
+                .show(getParentFragmentManager(), "dialog"));
+        kidBloodTypeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.kid_blood_type_title_text), currentChild.getBloodType(), lView)
+                .show(getParentFragmentManager(), "dialog"));
 
         newKidBtn.setOnClickListener(lView -> {
             View inflatedView = View.inflate(context, R.layout.new_kid_dialog, null);
@@ -186,10 +187,12 @@ public class ChildrenFragment extends MyFragment {
         View viewToShow = null;
         View viewToHide = null;
         if (parentInfoContainer.getVisibility() == View.VISIBLE) {
+            childrenViewModel.requestSingleChild(authHeader, currentChild.getChildId());
             actionBarTitle = currentChild.getName() + " " + currentChild.getSurname();
             viewToShow = kidInfoContainer;
             viewToHide = parentInfoContainer;
         } else if (kidInfoContainer.getVisibility() == View.VISIBLE) {
+            childrenViewModel.requestChildrenList(authHeader);
             setBackBtnState(false);
             ViewDriver.toggleChildViewsEnable(kidInfoContainer, false);
             actionBarTitle = getString(R.string.title_children);
@@ -207,6 +210,30 @@ public class ChildrenFragment extends MyFragment {
             return;
         }
         ViewDriver.hideView(viewToHide, R.anim.hide_right_animation, context);
+    }
+
+    public void returnFieldValue(String fieldValue, View calledView) {
+        switch (calledView.getId()) {
+            case R.id.kid_name_container:
+                currentChild.setName(fieldValue);
+                break;
+            case R.id.kid_patronymic_container:
+                currentChild.setPatronymic(fieldValue);
+                break;
+            case R.id.kid_surname_container:
+                currentChild.setSurname(fieldValue);
+                break;
+            case R.id.kid_age_container:
+                currentChild.setAge(Integer.parseInt(fieldValue));
+                break;
+            case R.id.kid_locker_container:
+                currentChild.setLockerNum(fieldValue);
+                break;
+            case R.id.kid_blood_type_container:
+                currentChild.setBloodType(fieldValue);
+                break;
+        }
+        childrenViewModel.requestUpdateChild(authHeader, currentChild.getChildId(), currentChild);
     }
 
     public void showKidInfo(Child child) {

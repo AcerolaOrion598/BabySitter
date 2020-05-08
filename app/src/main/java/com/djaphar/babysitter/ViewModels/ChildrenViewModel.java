@@ -98,4 +98,22 @@ public class ChildrenViewModel extends AndroidViewModel {
             }
         });
     }
+
+    public void requestUpdateChild(HashMap<String, String> headersMap, String childId, Child child) {
+        mainApi.requestUpdateChild(headersMap, childId, child).enqueue(new Callback<Child>() {
+            @Override
+            public void onResponse(@NonNull Call<Child> call, @NonNull Response<Child> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                currentChildMutableLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Child> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

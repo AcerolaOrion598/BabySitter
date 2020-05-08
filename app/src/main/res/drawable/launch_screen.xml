@@ -5,6 +5,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/sayaka" />
+            android:src="@drawable/sayaka2" />
     </item>
 </layer-list>

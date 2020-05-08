@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.djaphar.babysitter.Fragments.ChildrenFragment;
 import com.djaphar.babysitter.R;
+import com.djaphar.babysitter.SupportClasses.Adapters.MainDialog;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.MyFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -19,7 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainDialog.CurrentChildDialogListener {
 
     private final static int SELECT_PICTURE_ID = 1;
     private TextView actionBarTitle, backBtn;
@@ -43,12 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        MyFragment currentFragment = null;
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-
-        if (navHostFragment != null) {
-            currentFragment = (MyFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
-        }
+        MyFragment currentFragment = getMyFragment();
 
         if (currentFragment == null) {
             return;
@@ -96,5 +92,23 @@ public class MainActivity extends AppCompatActivity {
     public void logout() {
         startActivity(new Intent(this, AuthActivity.class));
         finish();
+    }
+
+    @Override
+    public void returnFieldValue(String fieldValue, View calledView) {
+        MyFragment myFragment = getMyFragment();
+        if (myFragment == null) {
+            return;
+        }
+        myFragment.returnFieldValue(fieldValue, calledView);
+    }
+
+    private MyFragment getMyFragment() {
+        MyFragment myFragment = null;
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            myFragment = (MyFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
+        }
+        return myFragment;
     }
 }

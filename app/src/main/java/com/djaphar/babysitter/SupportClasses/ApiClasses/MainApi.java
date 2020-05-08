@@ -12,7 +12,9 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface MainApi {
 
@@ -29,6 +31,15 @@ public interface MainApi {
     @POST("children/")
     Call<Void> requestCreateChild(@HeaderMap Map<String, String> headers, @Body Child child);
 
+    @PUT("children/{id}/")
+    Call<Child> requestUpdateChild(@HeaderMap Map<String, String> headers, @Path("id") String id, @Body Child child);
+
     @GET("foods")
     Call<ArrayList<Food>> requestMyFoods(@HeaderMap Map<String, String> headers);
+
+    @GET("events")
+    Call<Event> requestEvent(@HeaderMap Map<String, String> headers, @Query("child_id") String child_id, @Query("date") String date);
+
+    @POST("events/")
+    Call<Void> requestUpdateEvent(@HeaderMap Map<String, String> headers, @Body Event event);
 }
