@@ -1,8 +1,12 @@
 package com.djaphar.babysitter.Fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.djaphar.babysitter.Activities.MainActivity;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.Adapters.ChildrenRecyclerViewAdapter;
@@ -21,10 +28,12 @@ import com.djaphar.babysitter.SupportClasses.Adapters.MainDialog;
 import com.djaphar.babysitter.SupportClasses.Adapters.ParentsRecyclerViewAdapter;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Parent;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.UpdatePictureModel;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.babysitter.ViewModels.ChildrenViewModel;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
@@ -47,10 +56,10 @@ public class ChildrenFragment extends MyFragment {
     private ScrollView kidInfoSv, parentInfoSv;
     private TextView kidNameContent, kidPatronymicContent, kidSurnameContent, kidAgeContent, kidLockerContent, kidBloodTypeContent, inviteCodeContent,
             parentNameContent, parentPatronymicContent, parentSurnameContent, parentRoleContent, parentKidContent, parentPhoneNumContent;
-    private ImageButton newKidBtn, selectPictureBtn;
+    private ImageButton newKidBtn, selectPictureBtn, deletePictureBtn, cancelPictureBtn, savePictureBtn;
     private ImageView kidPhoto, parentPhoto;
+    private View currentView;
     private Child currentChild;
-    private Uri selectedPictureUri;
     private HashMap<String, String> authHeader = new HashMap<>();
 
     @Nullable
@@ -87,13 +96,17 @@ public class ChildrenFragment extends MyFragment {
         parentPhoneNumContent = root.findViewById(R.id.parent_phone_num_content);
         newKidBtn = root.findViewById(R.id.new_kid_btn);
         selectPictureBtn = root.findViewById(R.id.select_picture_btn);
+        deletePictureBtn = root.findViewById(R.id.delete_picture_btn);
+        cancelPictureBtn = root.findViewById(R.id.cancel_picture_btn);
+        savePictureBtn = root.findViewById(R.id.save_picture_btn);
         kidPhoto = root.findViewById(R.id.kid_photo);
         parentPhoto = root.findViewById(R.id.parent_photo);
         context = getContext();
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             setActionBarTitle(getString(R.string.title_children));
-            setBackBtnState(false);
+            setBackBtnState(View.GONE);
+            mainActivity.setNewBtnState(View.GONE);
         }
         return root;
     }
@@ -120,8 +133,7 @@ public class ChildrenFragment extends MyFragment {
 
         childrenViewModel.getCurrentChild().observe(getViewLifecycleOwner(), currentChild -> {
             if (currentChild == null) {
-                ViewDriver.toggleChildViewsEnable(kidInfoContainer, false);
-                ViewDriver.hideView(kidInfoContainer, R.anim.hide_right_animation, context);
+                backWasPressed();
                 return;
             }
             this.currentChild = currentChild;
@@ -179,15 +191,47 @@ public class ChildrenFragment extends MyFragment {
                     })
                     .show();
         });
-        selectPictureBtn.setOnClickListener(lView -> mainActivity.selectPicture());
+
+        selectPictureBtn.setOnClickListener(lView -> {
+            if (!currentChild.getPhotoLink().equals(getString(R.string.no_picture_url))) {
+                if (deletePictureBtn.getVisibility() == View.VISIBLE) {
+                    mainActivity.selectPicture();
+                } else {
+                    ViewDriver.showView(deletePictureBtn, R.anim.show_round_btn, context);
+                    currentView = deletePictureBtn;
+                }
+            } else {
+                mainActivity.selectPicture();
+            }
+        });
+
+        deletePictureBtn.setOnClickListener(lView -> new AlertDialog.Builder(mainActivity)
+                .setTitle(R.string.delete_picture_title)
+                .setMessage(R.string.delete_picture_message)
+                .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
+                .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
+                    childrenViewModel.requestDeletePicture(authHeader,
+                            new UpdatePictureModel(currentChild.getChildId(), getString(R.string.children_profile), null));
+                    ViewDriver.hideView(deletePictureBtn, R.anim.hide_round_btn, context);
+                    currentView = kidInfoContainer;
+                })
+                .show());
+
+        cancelPictureBtn.setOnClickListener(lView -> backWasPressed());
+
+        savePictureBtn.setOnClickListener(lView -> {
+            new PictureUploader(((BitmapDrawable) kidPhoto.getDrawable()).getBitmap(), childrenViewModel,
+                    authHeader, currentChild.getChildId(), getString(R.string.children_profile)).execute();
+            hideCancelBtn();
+        });
     }
 
     private void setActionBarTitle(String title) {
         mainActivity.setActionBarTitle(title);
     }
 
-    private void setBackBtnState(boolean visible) {
-        mainActivity.setBackBtnState(visible);
+    private void setBackBtnState(int visibilityState) {
+        mainActivity.setBackBtnState(visibilityState);
     }
 
     public boolean everythingIsClosed() {
@@ -195,33 +239,53 @@ public class ChildrenFragment extends MyFragment {
     }
 
     public void backWasPressed() {
-        String actionBarTitle = "";
-        View viewToShow = null;
-        View viewToHide = null;
-        if (parentInfoContainer.getVisibility() == View.VISIBLE) {
-            childrenViewModel.requestSingleChild(authHeader, currentChild.getChildId());
-            actionBarTitle = currentChild.getName() + " " + currentChild.getSurname();
-            viewToShow = kidInfoContainer;
-            viewToHide = parentInfoContainer;
-        } else if (kidInfoContainer.getVisibility() == View.VISIBLE) {
-            childrenViewModel.requestChildrenList(authHeader);
-            setBackBtnState(false);
-            ViewDriver.toggleChildViewsEnable(kidInfoContainer, false);
-            actionBarTitle = getString(R.string.title_children);
-            viewToShow = childrenListContainer;
-            viewToHide = kidInfoContainer;
+        switch (currentView.getId()) {
+            case R.id.parent_info_container:
+                childrenViewModel.requestSingleChild(authHeader, currentChild.getChildId());
+                setActionBarTitle(currentChild.getName() + " " + currentChild.getSurname());
+                kidInfoContainer.setVisibility(View.VISIBLE);
+                ViewDriver.hideView(parentInfoContainer, R.anim.hide_right_animation, context);
+                if (deletePictureBtn.getVisibility() == View.VISIBLE) {
+                    currentView = deletePictureBtn;
+                    break;
+                }
+                currentView = kidInfoContainer;
+                break;
+            case R.id.kid_info_container:
+                childrenViewModel.requestChildrenList(authHeader);
+                setBackBtnState(View.GONE);
+                ViewDriver.toggleChildViewsEnable(kidInfoContainer, false);
+                setActionBarTitle(getString(R.string.title_children));
+                childrenListContainer.setVisibility(View.VISIBLE);
+                ViewDriver.hideView(kidInfoContainer, R.anim.hide_right_animation, context);
+                currentView = null;
+                break;
+            case R.id.delete_picture_btn:
+                ViewDriver.hideView(deletePictureBtn, R.anim.hide_round_btn, context);
+                currentView = kidInfoContainer;
+                break;
+            case R.id.cancel_picture_btn:
+                hideCancelBtn();
+                childrenViewModel.requestSingleChild(authHeader, currentChild.getChildId());
+                break;
         }
+    }
 
-        setActionBarTitle(actionBarTitle);
-        if (viewToShow == null) {
-            return;
-        }
-        viewToShow.setVisibility(View.VISIBLE);
+    private void hideCancelBtn() {
+        ViewDriver.hideView(cancelPictureBtn, R.anim.hide_round_btn, context).setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                savePictureBtn.setVisibility(View.GONE);
+                selectPictureBtn.setVisibility(View.VISIBLE);
+            }
 
-        if (viewToHide == null) {
-            return;
-        }
-        ViewDriver.hideView(viewToHide, R.anim.hide_right_animation, context);
+            @Override
+            public void onAnimationStart(Animation animation) { }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
+        });
+        currentView = kidInfoContainer;
     }
 
     public void returnFieldValue(String fieldValue, View calledView) {
@@ -252,11 +316,10 @@ public class ChildrenFragment extends MyFragment {
         childrenViewModel.requestSingleChild(authHeader, child.getChildId());
         currentChild = child;
         kidInfoSv.scrollTo(0, kidInfoSv.getTop());
-        setChildOptions(child);
-        setBackBtnState(true);
+        setBackBtnState(View.VISIBLE);
         ViewDriver.toggleChildViewsEnable(kidInfoContainer, true);
-        Animation animation = ViewDriver.showView(kidInfoContainer, R.anim.show_right_animation, context);
-        animation.setAnimationListener(new Animation.AnimationListener() {
+        currentView = kidInfoContainer;
+        ViewDriver.showView(kidInfoContainer, R.anim.show_right_animation, context).setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
                 childrenListContainer.setVisibility(View.GONE);
@@ -273,7 +336,12 @@ public class ChildrenFragment extends MyFragment {
     }
 
     private void setChildOptions(Child child) {
-//        Glide.with(context).load(child.getPhotoLink()).into(kidPhoto);
+        Glide.with(context)
+                .applyDefaultRequestOptions(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true))
+                .load(child.getPhotoLink())
+                .into(kidPhoto);
         setActionBarTitle(child.getName() + " " + child.getSurname());
         kidNameContent.setText(child.getName());
         kidPatronymicContent.setText(child.getPatronymic());
@@ -306,11 +374,16 @@ public class ChildrenFragment extends MyFragment {
     }
 
     public void showParentInfo(Parent parent, Child child) {
-//        Glide.with(context).load(parent.getPhotoUrl()).into(parentPhoto);
+        Glide.with(context)
+                .applyDefaultRequestOptions(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true))
+                .load(parent.getPhotoLink())
+                .into(parentPhoto);
         parentInfoSv.scrollTo(0, parentInfoSv.getTop());
         setParentOptions(parent, child);
-        Animation animation = ViewDriver.showView(parentInfoContainer, R.anim.show_right_animation, context);
-        animation.setAnimationListener(new Animation.AnimationListener() {
+        currentView = parentInfoContainer;
+        ViewDriver.showView(parentInfoContainer, R.anim.show_right_animation, context).setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
                 kidInfoContainer.setVisibility(View.GONE);
@@ -338,7 +411,36 @@ public class ChildrenFragment extends MyFragment {
     }
 
     public void setSelectedPicture(Uri selectedPictureUri) {
-        this.selectedPictureUri = selectedPictureUri;
+        selectPictureBtn.setVisibility(View.GONE);
+        deletePictureBtn.setVisibility(View.GONE);
+        cancelPictureBtn.setVisibility(View.VISIBLE);
+        savePictureBtn.setVisibility(View.VISIBLE);
+        currentView = cancelPictureBtn;
         kidPhoto.setImageURI(selectedPictureUri);
+    }
+
+    private static class PictureUploader extends AsyncTask<Void, Void, Void> {
+        private Bitmap picture;
+        private ChildrenViewModel childrenViewModel;
+        private HashMap<String, String> authHeader;
+        private String childId, profile;
+
+        PictureUploader(Bitmap picture, ChildrenViewModel childrenViewModel, HashMap<String, String> authHeader,
+                        String childId, String profile) {
+            this.picture = picture;
+            this.childrenViewModel = childrenViewModel;
+            this.authHeader = authHeader;
+            this.childId = childId;
+            this.profile = profile;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            picture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            String pictureStr = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+            childrenViewModel.requestUpdatePicture(authHeader, new UpdatePictureModel(childId, profile, pictureStr));
+            return null;
+        }
     }
 }

@@ -24,8 +24,7 @@ public class AuthViewModel extends AndroidViewModel {
 
     public AuthViewModel(@NonNull Application application) {
         super(application);
-        LocalDataRoom room = LocalDataRoom.getDatabase(application);
-        dao = room.localDataDao();
+        dao = LocalDataRoom.getDatabase(application).localDataDao();
         userLiveData = dao.getUser();
         mainApi = ApiBuilder.getMainApi();
     }
@@ -35,8 +34,7 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     public void loginRequest(String username, String password) {
-        Call<User> call = mainApi.requestLogin(username, password);
-        call.enqueue(new Callback<User>() {
+        mainApi.requestLogin(username, password).enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (!response.isSuccessful()) {

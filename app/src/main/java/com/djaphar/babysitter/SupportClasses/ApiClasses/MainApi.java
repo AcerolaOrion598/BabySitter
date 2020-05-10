@@ -11,6 +11,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -23,7 +24,7 @@ public interface MainApi {
     @POST("token/educator/")
     Call<User> requestLogin(@Field("username") String username, @Field("password") String password);
 
-    @GET("children")
+    @GET("children/")
     Call<ArrayList<Child>> requestChildrenList(@HeaderMap Map<String, String> headers);
 
     @GET("children/{id}/")
@@ -35,16 +36,16 @@ public interface MainApi {
     @PUT("children/{id}/")
     Call<Child> requestUpdateChild(@HeaderMap Map<String, String> headers, @Path("id") String id, @Body Child child);
 
-    @DELETE("children/{id}")
+    @DELETE("children/{id}/")
     Call<Void> requestDeleteChild(@HeaderMap Map<String, String> headers, @Path("id") String id);
 
-    @GET("events")
+    @GET("events/")
     Call<Event> requestEvent(@HeaderMap Map<String, String> headers, @Query("child_id") String child_id, @Query("date") String date);
 
     @POST("events/")
     Call<Void> requestUpdateEvent(@HeaderMap Map<String, String> headers, @Body Event event);
 
-    @GET("foods")
+    @GET("foods/")
     Call<ArrayList<Food>> requestMyFoods(@HeaderMap Map<String, String> headers);
 
     @POST("foods/")
@@ -52,4 +53,10 @@ public interface MainApi {
 
     @DELETE("foods/{id}/")
     Call<Void> requestDeleteFood(@HeaderMap Map<String, String> headers, @Path("id") String id);
+
+    @POST("photos/")
+    Call<Void> requestUpdatePicture(@HeaderMap Map<String, String> headers, @Body UpdatePictureModel updatePictureModel);
+
+    @HTTP(method = "DELETE", path = "photos/", hasBody = true)
+    Call<Child> requestDeletePicture(@HeaderMap Map<String, String> headers, @Body UpdatePictureModel updatePictureModel);
 }

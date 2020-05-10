@@ -70,7 +70,8 @@ public class BillingFragment extends MyFragment {
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             setActionBarTitle(getString(R.string.title_billing));
-            setBackBtnState(false);
+            setBackBtnState(View.GONE);
+            mainActivity.setNewBtnState(View.GONE);
         }
         return root;
     }
@@ -165,8 +166,8 @@ public class BillingFragment extends MyFragment {
         mainActivity.setActionBarTitle(title);
     }
 
-    private void setBackBtnState(boolean visible) {
-        mainActivity.setBackBtnState(visible);
+    private void setBackBtnState(int visibilityState) {
+        mainActivity.setBackBtnState(visibilityState);
     }
 
     public boolean everythingIsClosed() {
@@ -176,7 +177,7 @@ public class BillingFragment extends MyFragment {
     public void backWasPressed() {
         currentBill = null;
         setActionBarTitle(getString(R.string.title_billing));
-        setBackBtnState(false);
+        setBackBtnState(View.GONE);
         billingListContainer.setVisibility(View.VISIBLE);
         ViewDriver.toggleChildViewsEnable(billContainer, false);
         ViewDriver.hideView(billContainer, R.anim.hide_right_animation, context);
@@ -225,7 +226,7 @@ public class BillingFragment extends MyFragment {
 
     private void openBillContainer(String actionBarTitle) {
         setActionBarTitle(actionBarTitle);
-        setBackBtnState(true);
+        setBackBtnState(View.VISIBLE);
         ViewDriver.toggleChildViewsEnable(billContainer, true);
         Animation animation = ViewDriver.showView(billContainer, R.anim.show_right_animation, context);
         animation.setAnimationListener(new Animation.AnimationListener() {

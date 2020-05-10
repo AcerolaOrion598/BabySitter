@@ -8,6 +8,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.djaphar.babysitter.Fragments.ChildrenFragment;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
@@ -41,7 +43,12 @@ public class ChildrenRecyclerViewAdapter extends RecyclerView.Adapter<ChildrenRe
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Child child = children.get(position);
-        Glide.with(childrenFragment).load(child.getPhotoLink()).into(holder.childrenListKidPhoto);
+        Glide.with(childrenFragment)
+                .applyDefaultRequestOptions(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true))
+                .load(child.getPhotoLink())
+                .into(holder.childrenListKidPhoto);
         String fullName = child.getName() + " " + child.getSurname();
         holder.kidFullName.setText(fullName);
     }

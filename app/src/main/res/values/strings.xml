@@ -68,4 +68,9 @@
     <string name="event_update_success">Событие сохранено!</string>
     <string name="kid_delete_title">Удалить Ребёнка</string>
     <string name="kid_delete_message">Вы действительно хотите удалить этого ребёнка?</string>
+    <string name="children_profile">child</string>
+    <string name="picture_update_success">Фотография успешно обновлена!</string>
+    <string name="no_picture_url">http://82.148.31.234:8000/photos/placeholder.jpg</string>
+    <string name="delete_picture_title">Удалить Изображение</string>
+    <string name="delete_picture_message">Вы действительно хотите удалить это изображение?</string>
 </resources>

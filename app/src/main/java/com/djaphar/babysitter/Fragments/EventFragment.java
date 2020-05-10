@@ -43,7 +43,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class EventFragment extends MyFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, View.OnClickListener {
+public class EventFragment extends MyFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     private EventViewModel eventViewModel;
     private MainActivity mainActivity;
@@ -56,7 +56,7 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
     private TextView eatingEventContent, eventDateContent, scheduleArriveContent, scheduleLeaveContent, sleepStartContent, sleepEndContent,
             eatingFoodContent, eatingDenialContent;
     private EditText otherEd;
-    private Button scheduleSaveBtn, eatingSaveBtn, sleepingSaveBtn, otherSaveBtn;
+    private Button saveEventBtn;
     private Calendar calendar;
     private ArrayList<Food> foods;
     private ArrayList<Ration> tempRations = new ArrayList<>(), tempDenied = new ArrayList<>();
@@ -90,10 +90,7 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         eatingFoodContent = root.findViewById(R.id.eating_food_content);
         eatingDenialContent = root.findViewById(R.id.eating_denial_content);
         otherEd = root.findViewById(R.id.other_ed);
-        scheduleSaveBtn = root.findViewById(R.id.schedule_save_btn);
-        eatingSaveBtn = root.findViewById(R.id.eating_save_btn);
-        sleepingSaveBtn = root.findViewById(R.id.sleeping_save_btn);
-        otherSaveBtn = root.findViewById(R.id.other_save_btn);
+        saveEventBtn = root.findViewById(R.id.save_event_btn);
         context = getContext();
         calendar = Calendar.getInstance();
         curYear = calendar.get(Calendar.YEAR);
@@ -102,7 +99,8 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             setActionBarTitle(getString(R.string.title_event));
-            setBackBtnState(false);
+            setBackBtnState(View.GONE);
+            mainActivity.setNewBtnState(View.GONE);
         }
         return root;
     }
@@ -291,18 +289,18 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
             }
         });
 
-        scheduleSaveBtn.setOnClickListener(this);
-        eatingSaveBtn.setOnClickListener(this);
-        sleepingSaveBtn.setOnClickListener(this);
-        otherSaveBtn.setOnClickListener(this);
+        saveEventBtn.setOnClickListener(lView -> {
+            currentEvent.setComment(otherEd.getText().toString());
+            eventViewModel.requestUpdateEvent(authHeader, currentEvent, currentChild.getChildId(), getDateForRequest());
+        });
     }
 
     private void setActionBarTitle(String title) {
         mainActivity.setActionBarTitle(title);
     }
 
-    private void setBackBtnState(boolean visible) {
-        mainActivity.setBackBtnState(visible);
+    private void setBackBtnState(int visibilityState) {
+        mainActivity.setBackBtnState(visibilityState);
     }
 
     public boolean everythingIsClosed() {
@@ -311,7 +309,7 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
 
     public void backWasPressed() {
         setActionBarTitle(getString(R.string.title_event));
-        setBackBtnState(false);
+        setBackBtnState(View.GONE);
         ViewDriver.toggleChildViewsEnable(eventContainer, false);
         eventChildrenListSv.setVisibility(View.VISIBLE);
         ViewDriver.hideView(eventContainer, R.anim.hide_right_animation, context);
@@ -324,7 +322,7 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         eventDateContent.setText(DateFormat.getDateInstance().format(calendar.getTime()));
         String fullName = currentChild.getName() + " " + currentChild.getSurname();
         setActionBarTitle(fullName);
-        setBackBtnState(true);
+        setBackBtnState(View.VISIBLE);
         eventSv.scrollTo(0, eventSv.getTop());
         ViewDriver.toggleChildViewsEnable(eventContainer, true);
         Animation animation = ViewDriver.showView(eventContainer, R.anim.show_right_animation, context);
@@ -487,11 +485,5 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
             currentEvent.setAwoke(pickedTime);
             sleepEndContent.setText(pickedTime);
         }
-    }
-
-    @Override
-    public void onClick(View view) {
-        currentEvent.setComment(otherEd.getText().toString());
-        eventViewModel.requestUpdateEvent(authHeader, currentEvent, currentChild.getChildId(), getDateForRequest());
     }
 }

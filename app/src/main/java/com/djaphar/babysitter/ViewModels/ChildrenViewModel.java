@@ -3,9 +3,11 @@ package com.djaphar.babysitter.ViewModels;
 import android.app.Application;
 import android.widget.Toast;
 
+import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.ApiBuilder;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.MainApi;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.UpdatePictureModel;
 import com.djaphar.babysitter.SupportClasses.LocalDataClasses.LocalDataRoom;
 import com.djaphar.babysitter.SupportClasses.LocalDataClasses.User;
 
@@ -134,6 +136,53 @@ public class ChildrenViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void requestUpdatePicture(HashMap<String, String> headersMap, UpdatePictureModel updatePictureModel) {
+        mainApi.requestUpdatePicture(headersMap, updatePictureModel).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(getApplication(), getApplication().getString(R.string.picture_update_success), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void requestDeletePicture(HashMap<String, String> headersMap, UpdatePictureModel updatePictureModel) {
+        mainApi.requestDeletePicture(headersMap, updatePictureModel).enqueue(new Callback<Child>() {
+            @Override
+            public void onResponse(@NonNull Call<Child> call, @NonNull Response<Child> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Child currentChild = currentChildMutableLiveData.getValue();
+                if (currentChild == null) {
+                    return;
+                }
+
+                Child responseChild = response.body();
+                if (responseChild == null) {
+                    return;
+                }
+                currentChild.setPhotoLink(responseChild.getPhotoLink());
+                currentChildMutableLiveData.setValue(currentChild);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Child> call, @NonNull Throwable t) {
                 Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

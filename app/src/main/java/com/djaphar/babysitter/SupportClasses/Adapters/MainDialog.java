@@ -20,7 +20,7 @@ public class MainDialog extends AppCompatDialogFragment {
     private EditText fieldChangeEd;
     private String title, editableContent;
     private View calledView;
-    private CurrentChildDialogListener listener;
+    private MainDialogListener listener;
 
     public MainDialog(String title, String editableContent, View calledView) {
         this.title = title;
@@ -60,13 +60,13 @@ public class MainDialog extends AppCompatDialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            listener = (CurrentChildDialogListener) context;
+            listener = (MainDialogListener) context;
         } catch (ClassCastException e) {
             e.printStackTrace();
         }
     }
 
-    public interface CurrentChildDialogListener {
+    public interface MainDialogListener {
         void returnFieldValue(String fieldValue, View calledView);
     }
 }

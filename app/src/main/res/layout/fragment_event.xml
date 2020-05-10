@@ -218,23 +218,6 @@
 
                     </LinearLayout>
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/schedule_save_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="25dp"
-                        android:background="@drawable/save_button"
-                        android:fontFamily="@font/roboto_medium"
-                        android:paddingStart="15dp"
-                        android:paddingEnd="15dp"
-                        android:text="@string/save_btn_text"
-                        android:textColor="@color/colorWhite87"
-                        android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/schedule_leave_container" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -375,23 +358,6 @@
 
                     </LinearLayout>
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/eating_save_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="25dp"
-                        android:background="@drawable/save_button"
-                        android:fontFamily="@font/roboto_medium"
-                        android:paddingStart="15dp"
-                        android:paddingEnd="15dp"
-                        android:text="@string/save_btn_text"
-                        android:textColor="@color/colorWhite87"
-                        android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/eating_denial_container" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -494,23 +460,6 @@
 
                     </LinearLayout>
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/sleeping_save_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="25dp"
-                        android:background="@drawable/save_button"
-                        android:fontFamily="@font/roboto_medium"
-                        android:paddingStart="15dp"
-                        android:paddingEnd="15dp"
-                        android:text="@string/save_btn_text"
-                        android:textColor="@color/colorWhite87"
-                        android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/sleep_end_container" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -521,6 +470,7 @@
                     android:paddingStart="@dimen/screen_horizontal_padding"
                     android:paddingTop="@dimen/thick_top_border_thickness"
                     android:paddingEnd="@dimen/screen_horizontal_padding"
+                    android:paddingBottom="25dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/sleeping_container">
@@ -552,24 +502,21 @@
                         android:textSize="14sp"
                         app:layout_constraintTop_toBottomOf="@+id/other_container_tv" />
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/other_save_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginBottom="25dp"
-                        android:background="@drawable/save_button"
-                        android:fontFamily="@font/roboto_medium"
-                        android:paddingStart="15dp"
-                        android:paddingEnd="15dp"
-                        android:text="@string/save_btn_text"
-                        android:textColor="@color/colorWhite87"
-                        android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/other_ed" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/save_event_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/main_button"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/save_btn_text"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/other_container" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

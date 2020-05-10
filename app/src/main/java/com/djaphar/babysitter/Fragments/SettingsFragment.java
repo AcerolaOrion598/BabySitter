@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.djaphar.babysitter.Activities.MainActivity;
@@ -36,7 +35,6 @@ public class SettingsFragment extends MyFragment {
     private RecyclerView mealRecyclerView;
     private ConstraintLayout settingsContainer, mealsContainer;
     private TextView logoutTv, mealListTv;
-    private ImageButton newMealBtn;
     private HashMap<String, String> authHeader = new HashMap<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,12 +45,12 @@ public class SettingsFragment extends MyFragment {
         mealsContainer = root.findViewById(R.id.meals_container);
         logoutTv = root.findViewById(R.id.logout_tv);
         mealListTv = root.findViewById(R.id.meal_list_tv);
-        newMealBtn = root.findViewById(R.id.new_meal_btn);
         context = getContext();
         mainActivity = (MainActivity) getActivity();
         if (mainActivity != null) {
             setActionBarTitle(getString(R.string.settings));
-            setBackBtnState(false);
+            setBackBtnState(View.GONE);
+            setNewBtnState(View.GONE);
         }
         return root;
     }
@@ -80,17 +78,18 @@ public class SettingsFragment extends MyFragment {
         logoutTv.setOnClickListener(lView -> showStandardDialog(getString(R.string.logout_text), getString(R.string.logout_message), null));
 
         mealListTv.setOnClickListener(lView -> showFoodsContainer());
-
-        newMealBtn.setOnClickListener(lView -> new MainDialog(getString(R.string.new_meal_title), "", lView)
-                .show(getParentFragmentManager(), "dialog"));
     }
 
     private void setActionBarTitle(String title) {
         mainActivity.setActionBarTitle(title);
     }
 
-    private void setBackBtnState(boolean visible) {
-        mainActivity.setBackBtnState(visible);
+    private void setBackBtnState(int visibilityState) {
+        mainActivity.setBackBtnState(visibilityState);
+    }
+
+    private void setNewBtnState(int visibilityState) {
+        mainActivity.setNewBtnState(visibilityState);
     }
 
     public boolean everythingIsClosed() {
@@ -100,13 +99,18 @@ public class SettingsFragment extends MyFragment {
     public void backWasPressed() {
         settingsContainer.setVisibility(View.VISIBLE);
         setActionBarTitle(getString(R.string.settings));
-        setBackBtnState(false);
+        setBackBtnState(View.GONE);
+        setNewBtnState(View.GONE);
         ViewDriver.toggleChildViewsEnable(mealsContainer, false);
         ViewDriver.hideView(mealsContainer, R.anim.hide_right_animation, context);
     }
 
+    public void newBtnWasPressed() {
+        new MainDialog(getString(R.string.new_meal_title), "", mainActivity.getNewBtn()).show(getParentFragmentManager(), "dialog");
+    }
+
     public void returnFieldValue(String fieldValue, View calledView) {
-        if (calledView.getId() == R.id.new_meal_btn) {
+        if (calledView.getId() == R.id.new_btn) {
             settingsViewModel.requestCreateFood(authHeader, new Food(null, fieldValue));
         }
     }
@@ -118,7 +122,8 @@ public class SettingsFragment extends MyFragment {
     private void showFoodsContainer() {
         settingsViewModel.requestMyFoods(authHeader);
         setActionBarTitle(getString(R.string.meal_list_tv_text));
-        setBackBtnState(true);
+        setBackBtnState(View.VISIBLE);
+        setNewBtnState(View.VISIBLE);
         ViewDriver.toggleChildViewsEnable(mealsContainer, true);
         ViewDriver.showView(mealsContainer, R.anim.show_right_animation, context).setAnimationListener(new Animation.AnimationListener() {
             @Override

@@ -2,6 +2,8 @@
 <resources>
     <color name="colorTinyGrey">#FAFAFA</color>
     <color name="colorLightGrey">#EEE</color>
+    <color name="colorGrey">#AAA</color>
+    <color name="colorDarkGrey">#666</color>
     <color name="colorWhite">#FFF</color>
     <color name="colorWhite87">#DEFFFFFF</color>
     <color name="colorWhite60">#99FFFFFF</color>

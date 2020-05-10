@@ -2,10 +2,9 @@ package com.djaphar.babysitter.SupportClasses.ApiClasses;
 
 public class Parent {
 
-    private String name, patronymic, surname, relation_degree, photo_link;
-    private Integer phone;
+    private String name, patronymic, surname, relation_degree, photo_link, phone;
 
-    public Parent(String name, String patronymic, String surname, String relation_degree, String photo_link, Integer phone) {
+    public Parent(String name, String patronymic, String surname, String relation_degree, String photo_link, String phone) {
         this.name = name;
         this.patronymic = patronymic;
         this.surname = surname;
@@ -34,7 +33,7 @@ public class Parent {
         return photo_link;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
@@ -58,7 +57,7 @@ public class Parent {
         this.photo_link = photo_link;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 }
