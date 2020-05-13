@@ -24,6 +24,7 @@ import com.djaphar.babysitter.SupportClasses.OtherClasses.ViewDriver;
 import com.djaphar.babysitter.ViewModels.BillingViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -48,6 +49,7 @@ public class BillingFragment extends MyFragment {
     private Bill currentBill;
     private ArrayList<Child> children;
     private AlertDialog billTargetDialog;
+    private HashMap<String, String> authHeader = new HashMap<>();
     private boolean firstOpened = true;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,6 +81,15 @@ public class BillingFragment extends MyFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        billingViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            if (user == null) {
+                return;
+            }
+            authHeader.put(getString(R.string.auth_header_key), user.getToken_type() + " " + user.getAccess_token());
+            billingViewModel.requestChildrenList(authHeader);
+        });
+
         billingViewModel.getBills().observe(getViewLifecycleOwner(), bills -> {
             if (bills == null) {
                 return;
@@ -104,7 +115,7 @@ public class BillingFragment extends MyFragment {
             });
         });
 
-        billingViewModel.getKids().observe(getViewLifecycleOwner(), kids -> {
+        billingViewModel.getChildren().observe(getViewLifecycleOwner(), kids -> {
             if (kids == null) {
                 return;
             }

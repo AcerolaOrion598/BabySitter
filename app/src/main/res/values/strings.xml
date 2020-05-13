@@ -47,14 +47,14 @@
     <string name="back_btn_text">Назад</string>
     <string name="settings">Настройки</string>
     <string name="meal_list_tv_text">Список Блюд</string>
-    <string name="delete_bill_title">Удалить Счёт</string>
+    <string name="delete_bill_title">Удалить счёт</string>
     <string name="delete_bill_message">Вы действительно хотите удалить этот счёт?</string>
     <string name="logout_text">Выйти</string>
     <string name="logout_message">Вы действительно хотите выйти из приложения?</string>
-    <string name="delete_meal_title">Удалить Блюдо</string>
+    <string name="delete_meal_title">Удалить блюдо</string>
     <string name="delete_meal_message">Вы действительно хотите удалить это блюдо?</string>
-    <string name="new_meal_title">Новое Блюдо</string>
-    <string name="new_kid_title">Новый Ребёнок</string>
+    <string name="new_meal_title">Новое блюдо</string>
+    <string name="new_kid_title">Новый ребёнок</string>
     <string name="login_title">Вход</string>
     <string name="login_text">Логин</string>
     <string name="password_text">Пароль</string>
@@ -66,11 +66,11 @@
     <string name="lunch">Обед</string>
     <string name="snack">Полдник</string>
     <string name="event_update_success">Событие сохранено!</string>
-    <string name="kid_delete_title">Удалить Ребёнка</string>
+    <string name="kid_delete_title">Удалить ребёнка</string>
     <string name="kid_delete_message">Вы действительно хотите удалить этого ребёнка?</string>
-    <string name="children_profile">child</string>
+    <string name="child_profile">child</string>
     <string name="picture_update_success">Фотография успешно обновлена!</string>
     <string name="no_picture_url">http://82.148.31.234:8000/photos/placeholder.jpg</string>
-    <string name="delete_picture_title">Удалить Изображение</string>
-    <string name="delete_picture_message">Вы действительно хотите удалить это изображение?</string>
+    <string name="delete_picture_title">Удалить фотографию</string>
+    <string name="delete_picture_message">Вы действительно хотите удалить эту фотографию?</string>
 </resources>

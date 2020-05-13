@@ -150,6 +150,7 @@ public class ChildrenViewModel extends AndroidViewModel {
                     return;
                 }
                 Toast.makeText(getApplication(), getApplication().getString(R.string.picture_update_success), Toast.LENGTH_SHORT).show();
+                requestSingleChild(headersMap, updatePictureModel.getId());
             }
 
             @Override

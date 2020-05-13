@@ -211,7 +211,7 @@ public class ChildrenFragment extends MyFragment {
                 .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
                 .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
                     childrenViewModel.requestDeletePicture(authHeader,
-                            new UpdatePictureModel(currentChild.getChildId(), getString(R.string.children_profile), null));
+                            new UpdatePictureModel(currentChild.getChildId(), getString(R.string.child_profile), null));
                     ViewDriver.hideView(deletePictureBtn, R.anim.hide_round_btn, context);
                     currentView = kidInfoContainer;
                 })
@@ -221,7 +221,7 @@ public class ChildrenFragment extends MyFragment {
 
         savePictureBtn.setOnClickListener(lView -> {
             new PictureUploader(((BitmapDrawable) kidPhoto.getDrawable()).getBitmap(), childrenViewModel,
-                    authHeader, currentChild.getChildId(), getString(R.string.children_profile)).execute();
+                    authHeader, currentChild.getChildId(), getString(R.string.child_profile)).execute();
             hideCancelBtn();
         });
     }

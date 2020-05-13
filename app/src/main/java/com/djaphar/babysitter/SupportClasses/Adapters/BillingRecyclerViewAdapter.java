@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecyclerViewAdapter.ViewHolder> {
@@ -28,9 +27,9 @@ public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecy
     public BillingRecyclerViewAdapter(ArrayList<Bill> bills, BillingFragment billingFragment) {
         this.bills = bills;
         this.billingFragment = billingFragment;
-        if (getItemCount() == 0) {
-            bills.add(new Bill("У Вас пока нет ни одного счёта", null, null, null, null));
-        }
+//        if (getItemCount() == 0) {
+//            bills.add(new Bill("У Вас пока нет ни одного счёта", null, null, null, null));
+//        }
     }
 
     @NonNull
@@ -48,13 +47,13 @@ public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecy
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bill bill = bills.get(position);
         holder.billingListThemeTv.setText(bill.getTheme());
-        if (bill.getStatus() == null) {
-            holder.billingListThemeTv.setTextColor(billingFragment.getResources().getColor(R.color.colorBlack30));
-            holder.billingListSwitchableContainer.setVisibility(View.GONE);
-            return;
-        }
-        holder.billingListThemeTv.setTextColor(billingFragment.getResources().getColor(R.color.colorBlack87));
-        holder.billingListSwitchableContainer.setVisibility(View.VISIBLE);
+//        if (bill.getStatus() == null) {
+//            holder.billingListThemeTv.setTextColor(billingFragment.getResources().getColor(R.color.colorBlack30));
+//            holder.billingListSwitchableContainer.setVisibility(View.GONE);
+//            return;
+//        }
+//        holder.billingListThemeTv.setTextColor(billingFragment.getResources().getColor(R.color.colorBlack87));
+//        holder.billingListSwitchableContainer.setVisibility(View.VISIBLE);
         float price = bill.getPrice();
         String priceStr;
         if (price == (int) price) {
@@ -79,14 +78,14 @@ public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecy
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private RelativeLayout parentLayout;
-        private ConstraintLayout billingListSwitchableContainer;
+//        private ConstraintLayout billingListSwitchableContainer;
         private TextView billingListThemeTv, billingListTargetTv, billingListPriceTv, billingListStatusTv;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             parentLayout = itemView.findViewById(R.id.parent_layout_billing);
-            billingListSwitchableContainer = itemView.findViewById(R.id.billing_list_switchable_container);
+//            billingListSwitchableContainer = itemView.findViewById(R.id.billing_list_switchable_container);
             billingListStatusTv = itemView.findViewById(R.id.billing_list_status_tv);
             billingListThemeTv = itemView.findViewById(R.id.billing_list_theme_tv);
             billingListTargetTv = itemView.findViewById(R.id.billing_list_target_tv);
