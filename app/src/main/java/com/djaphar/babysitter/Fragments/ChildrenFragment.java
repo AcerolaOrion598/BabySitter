@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.djaphar.babysitter.Activities.MainActivity;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.Adapters.ChildrenRecyclerViewAdapter;
@@ -336,12 +335,7 @@ public class ChildrenFragment extends MyFragment {
     }
 
     private void setChildOptions(Child child) {
-        Glide.with(context)
-                .applyDefaultRequestOptions(new RequestOptions()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true))
-                .load(child.getPhotoLink())
-                .into(kidPhoto);
+        Glide.with(context).load(child.getPhotoLink()).into(kidPhoto);
         setActionBarTitle(child.getName() + " " + child.getSurname());
         kidNameContent.setText(child.getName());
         kidPatronymicContent.setText(child.getPatronymic());
@@ -374,12 +368,7 @@ public class ChildrenFragment extends MyFragment {
     }
 
     public void showParentInfo(Parent parent, Child child) {
-        Glide.with(context)
-                .applyDefaultRequestOptions(new RequestOptions()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true))
-                .load(parent.getPhotoLink())
-                .into(parentPhoto);
+        Glide.with(context).load(parent.getPhotoLink()).into(parentPhoto);
         parentInfoSv.scrollTo(0, parentInfoSv.getTop());
         setParentOptions(parent, child);
         currentView = parentInfoContainer;

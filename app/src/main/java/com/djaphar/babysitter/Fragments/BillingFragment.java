@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import com.djaphar.babysitter.SupportClasses.Adapters.BillTargetListRecyclerView
 import com.djaphar.babysitter.SupportClasses.Adapters.BillingRecyclerViewAdapter;
 import com.djaphar.babysitter.SupportClasses.Adapters.MainDialog;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Bill;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.BillPostModel;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.Child;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.MyFragment;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.ViewDriver;
@@ -44,7 +46,8 @@ public class BillingFragment extends MyFragment {
     private LinearLayout billThemeContainer, billPriceContainer, billTargetContainer, billStatusContainer;
     private ConstraintLayout billContainer, billingListContainer;
     private TextView billThemeContent, billPriceContent, billTargetContent, billStatusContent;
-    private Button billDeleteBtn;
+    private EditText billDescriptionEd;
+    private Button billDeleteBtn, billSaveBtn;
     private ImageButton newBillBtn;
     private Bill currentBill;
     private ArrayList<Child> children;
@@ -66,7 +69,9 @@ public class BillingFragment extends MyFragment {
         billPriceContent = root.findViewById(R.id.bill_price_content);
         billTargetContent = root.findViewById(R.id.bill_target_content);
         billStatusContent = root.findViewById(R.id.bill_status_content);
+        billDescriptionEd = root.findViewById(R.id.bill_description_ed);
         billDeleteBtn = root.findViewById(R.id.bill_delete_btn);
+        billSaveBtn = root.findViewById(R.id.bill_save_btn);
         newBillBtn = root.findViewById(R.id.new_bill_btn);
         context = getContext();
         mainActivity = (MainActivity) getActivity();
@@ -87,6 +92,7 @@ public class BillingFragment extends MyFragment {
                 return;
             }
             authHeader.put(getString(R.string.auth_header_key), user.getToken_type() + " " + user.getAccess_token());
+            billingViewModel.requestMyBills(authHeader);
             billingViewModel.requestChildrenList(authHeader);
         });
 
@@ -115,17 +121,23 @@ public class BillingFragment extends MyFragment {
             });
         });
 
-        billingViewModel.getChildren().observe(getViewLifecycleOwner(), kids -> {
-            if (kids == null) {
+        billingViewModel.getChildren().observe(getViewLifecycleOwner(), children -> {
+            if (children == null) {
                 return;
             }
-            this.children = kids;
+            this.children = children;
         });
 
-        billThemeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_theme_title_text), billThemeContent.getText().toString(), lView)
-                .show(getParentFragmentManager(), "dialog"));
-        billPriceContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_price_title_text), billPriceContent.getText().toString(), lView)
-                .show(getParentFragmentManager(), "dialog"));
+        billingViewModel.getCurrentBill().observe(getViewLifecycleOwner(), currentBill -> {
+            if (currentBill == null) {
+                backWasPressed();
+            }
+        });
+
+        billThemeContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_theme_title_text),
+                billThemeContent.getText().toString(), lView).show(getParentFragmentManager(), "dialog"));
+        billPriceContainer.setOnClickListener(lView -> new MainDialog(getString(R.string.bill_price_title_text),
+                billPriceContent.getText().toString(), lView).show(getParentFragmentManager(), "dialog"));
 
         billTargetContainer.setOnClickListener(lView -> {
             View inflatedView = View.inflate(context, R.layout.recycler_kid_dialog, null);
@@ -134,8 +146,7 @@ public class BillingFragment extends MyFragment {
             billTargetRecyclerView.setNestedScrollingEnabled(false);
             billTargetRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             ConstraintLayout billTargetDefaultContainer = inflatedView.findViewById(R.id.bill_target_default_container);
-            billTargetDefaultContainer.setOnClickListener(container -> setBillTarget(new Child(getString(R.string.billing_target_default_text),
-                    null, "", null, null, null, null, null, null)));
+            billTargetDefaultContainer.setOnClickListener(container -> setBillTarget(getDefaultChild()));
             billTargetDialog = new AlertDialog.Builder(mainActivity)
                     .setView(inflatedView)
                     .setTitle(R.string.parent_kid_title_text)
@@ -155,8 +166,10 @@ public class BillingFragment extends MyFragment {
                     .setView(inflatedView)
                     .setTitle(R.string.bill_status_title_text)
                     .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
-                    .setPositiveButton(R.string.ok_button, (dialogInterface, i) ->
-                            ViewDriver.setStatusTvOptions(billStatusContent, getResources(), billStatusSwitch.isChecked()))
+                    .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
+                        currentBill.setStatus(billStatusSwitch.isChecked());
+                        ViewDriver.setStatusTvOptions(billStatusContent, getResources(), billStatusSwitch.isChecked());
+                    })
                     .create()
                     .show();
         });
@@ -165,12 +178,22 @@ public class BillingFragment extends MyFragment {
                 .setTitle(R.string.delete_bill_title)
                 .setMessage(R.string.delete_bill_message)
                 .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
-                .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
-
-                })
+                .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> billingViewModel.requestDeleteBill(authHeader, currentBill.getBillId()))
                 .show());
 
-        newBillBtn.setOnClickListener(lView -> showBill(new Bill(null, null ,false, 0f, null)));
+        billSaveBtn.setOnClickListener(lView -> {
+            currentBill.setComment(billDescriptionEd.getText().toString());
+            BillPostModel model = new BillPostModel(currentBill.getBillId(), currentBill.getChild().getChildId(),
+                    currentBill.getTheme(), currentBill.getComment(), currentBill.getSum(), currentBill.getStatus());
+            if (currentBill.getBillId() == null) {
+                billingViewModel.requestCreateBill(authHeader, model);
+                return;
+            }
+            billingViewModel.requestUpdateBill(authHeader, currentBill.getBillId(), model);
+        });
+
+        newBillBtn.setOnClickListener(lView -> openBillContainer(new Bill(null, "" ,"",
+                getDefaultChild(), false, 0f)));
     }
 
     private void setActionBarTitle(String title) {
@@ -186,6 +209,7 @@ public class BillingFragment extends MyFragment {
     }
 
     public void backWasPressed() {
+        billingViewModel.requestMyBills(authHeader);
         currentBill = null;
         setActionBarTitle(getString(R.string.title_billing));
         setBackBtnState(View.GONE);
@@ -194,48 +218,32 @@ public class BillingFragment extends MyFragment {
         ViewDriver.hideView(billContainer, R.anim.hide_right_animation, context);
     }
 
+    public void returnFieldValue(String fieldValue, View calledView) {
+        switch (calledView.getId()) {
+            case R.id.bill_theme_container:
+                currentBill.setTheme(fieldValue);
+                break;
+            case R.id.bill_price_container:
+                currentBill.setSum(Float.parseFloat(fieldValue));
+                break;
+        }
+        setBillOptions(currentBill);
+    }
+
     public void setBillTarget(Child child) {
         String fullName = child.getName() + " " + child.getSurname();
+        if (child.getChildId() == null) {
+            fullName = getString(R.string.billing_target_default_text);
+        }
+        currentBill.setChild(child);
         billTargetContent.setText(fullName);
         billTargetDialog.cancel();
     }
 
-    public void showBill(Bill bill) {
+    public void openBillContainer(Bill bill) {
         currentBill = bill;
-        billDeleteBtn.setVisibility(View.VISIBLE);
-
-        String theme = bill.getTheme();
-        if (theme == null) {
-            theme = "Н/д";
-            billDeleteBtn.setVisibility(View.GONE);
-        }
-        billThemeContent.setText(theme);
-
-        float price = bill.getPrice();
-        if (price == (int) price) {
-            billPriceContent.setText(String.valueOf((int) price));
-        } else {
-            billPriceContent.setText(String.format(Locale.US, "%.2f", bill.getPrice()));
-        }
-
-        String target = getString(R.string.billing_target_default_text);
-        Child child = bill.getChild();
-        if (child != null) {
-            target = child.getName() + " " + child.getSurname();
-        }
-        billTargetContent.setText(target);
-
-        ViewDriver.setStatusTvOptions(billStatusContent, getResources(), bill.getStatus());
-
-        Integer id = bill.getId();
+        setBillOptions(bill);
         String actionBarTitle = "Новый Счёт";
-        if (id != null) {
-            actionBarTitle = getString(R.string.bill_text) + id;
-        }
-        openBillContainer(actionBarTitle);
-    }
-
-    private void openBillContainer(String actionBarTitle) {
         setActionBarTitle(actionBarTitle);
         setBackBtnState(View.VISIBLE);
         ViewDriver.toggleChildViewsEnable(billContainer, true);
@@ -252,5 +260,46 @@ public class BillingFragment extends MyFragment {
             @Override
             public void onAnimationRepeat(Animation animation) { }
         });
+    }
+
+    private void setBillOptions(Bill bill) {
+        billDeleteBtn.setVisibility(View.VISIBLE);
+        String billId = bill.getBillId();
+        if (billId == null) {
+            billDeleteBtn.setVisibility(View.GONE);
+        }
+
+        String theme = bill.getTheme();
+        if (theme == null) {
+            theme = getString(R.string.some_field_is_null);
+        }
+        billThemeContent.setText(theme);
+
+        float price = bill.getSum();
+        if (price == (int) price) {
+            billPriceContent.setText(String.valueOf((int) price));
+        } else {
+            billPriceContent.setText(String.format(Locale.US, "%.2f", bill.getSum()));
+        }
+
+        Child child = bill.getChild();
+        String target = child.getName() + " " + child.getSurname();
+        if (child.getChildId() == null) {
+            target = getString(R.string.billing_target_default_text);
+        }
+        billTargetContent.setText(target);
+
+        String comment = bill.getComment();
+        if (comment == null) {
+            comment = "";
+        }
+        billDescriptionEd.setText(comment);
+
+        ViewDriver.setStatusTvOptions(billStatusContent, getResources(), bill.getStatus());
+    }
+
+    private Child getDefaultChild() {
+        return new Child(null, null, null, null, null, null,
+                null, null, null);
     }
 }

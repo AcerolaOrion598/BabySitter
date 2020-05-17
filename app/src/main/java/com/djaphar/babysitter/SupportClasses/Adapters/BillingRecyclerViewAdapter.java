@@ -39,7 +39,7 @@ public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecy
         View view = LayoutInflater.from(context).inflate(R.layout.billing_list, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.parentLayout.setOnClickListener(lView ->
-                billingFragment.showBill(bills.get(viewHolder.getAdapterPosition())));
+                billingFragment.openBillContainer(bills.get(viewHolder.getAdapterPosition())));
         return viewHolder;
     }
 
@@ -47,14 +47,7 @@ public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecy
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bill bill = bills.get(position);
         holder.billingListThemeTv.setText(bill.getTheme());
-//        if (bill.getStatus() == null) {
-//            holder.billingListThemeTv.setTextColor(billingFragment.getResources().getColor(R.color.colorBlack30));
-//            holder.billingListSwitchableContainer.setVisibility(View.GONE);
-//            return;
-//        }
-//        holder.billingListThemeTv.setTextColor(billingFragment.getResources().getColor(R.color.colorBlack87));
-//        holder.billingListSwitchableContainer.setVisibility(View.VISIBLE);
-        float price = bill.getPrice();
+        float price = bill.getSum();
         String priceStr;
         if (price == (int) price) {
             priceStr = (int) price + "р.";

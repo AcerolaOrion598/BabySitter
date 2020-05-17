@@ -73,4 +73,6 @@
     <string name="no_picture_url">http://82.148.31.234:8000/photos/placeholder.jpg</string>
     <string name="delete_picture_title">Удалить фотографию</string>
     <string name="delete_picture_message">Вы действительно хотите удалить эту фотографию?</string>
+    <string name="create_bill_text">Счёт успешно выставлен!</string>
+    <string name="update_bill_text">Счёт успешно обновлён!</string>
 </resources>

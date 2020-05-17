@@ -37,7 +37,7 @@ public class EventChildrenRecyclerViewAdapter extends RecyclerView.Adapter<Event
         View view = LayoutInflater.from(context).inflate(R.layout.event_children_list, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         if (children.get(0).getSurname() != null) {
-            viewHolder.parentLayout.setOnClickListener(lView -> eventFragment.showKidEvent(children.get(viewHolder.getAdapterPosition())));
+            viewHolder.parentLayout.setOnClickListener(lView -> eventFragment.showChildEvent(children.get(viewHolder.getAdapterPosition())));
         }
         return viewHolder;
     }

@@ -315,7 +315,7 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         ViewDriver.hideView(eventContainer, R.anim.hide_right_animation, context);
     }
 
-    public void showKidEvent(Child child) {
+    public void showChildEvent(Child child) {
         currentChild = child;
         setCalendarOptions(curYear, curMonth, curDayOfMonth);
         eventViewModel.requestEvent(authHeader, currentChild.getChildId(), getDateForRequest());
@@ -376,7 +376,7 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
         ArrayList<Ration> rations = new ArrayList<>();
         ArrayList<Meal> meals = currentEvent.getMeals();
         if (meals != null) {
-            for (Meal meal : currentEvent.getMeals()) {
+            for (Meal meal : meals) {
                 if (meal.getType() == mealType) {
                     rations = meal.getRations();
                     break;

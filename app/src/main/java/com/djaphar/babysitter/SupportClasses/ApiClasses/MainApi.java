@@ -59,4 +59,19 @@ public interface MainApi {
 
     @HTTP(method = "DELETE", path = "photos/", hasBody = true)
     Call<Child> requestDeletePicture(@HeaderMap Map<String, String> headers, @Body UpdatePictureModel updatePictureModel);
+
+    @GET("bill/")
+    Call<ArrayList<Bill>> requestMyBills(@HeaderMap Map<String, String> headers);
+
+    @POST("bill/")
+    Call<Void> requestCreateBill(@HeaderMap Map<String, String> headers, @Body BillPostModel billPostModel);
+
+    @GET("bill/{bill_id}/")
+    Call<Bill> requestSingleBill(@HeaderMap Map<String, String> headers, @Path("bill_id") String bill_id);
+
+    @PUT("bill/{bill_id}/")
+    Call<Void> requestUpdateBill(@HeaderMap Map<String, String> headers, @Path("bill_id") String bill_id, @Body BillPostModel billPostModel);
+
+    @DELETE("bill/{bill_id}/")
+    Call<Void> requestDeleteBill(@HeaderMap Map<String, String> headers, @Path("bill_id") String bill_id);
 }
