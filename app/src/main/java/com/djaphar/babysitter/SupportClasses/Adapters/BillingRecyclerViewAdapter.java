@@ -27,9 +27,6 @@ public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecy
     public BillingRecyclerViewAdapter(ArrayList<Bill> bills, BillingFragment billingFragment) {
         this.bills = bills;
         this.billingFragment = billingFragment;
-//        if (getItemCount() == 0) {
-//            bills.add(new Bill("У Вас пока нет ни одного счёта", null, null, null, null));
-//        }
     }
 
     @NonNull
@@ -39,7 +36,7 @@ public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecy
         View view = LayoutInflater.from(context).inflate(R.layout.billing_list, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.parentLayout.setOnClickListener(lView ->
-                billingFragment.openBillContainer(bills.get(viewHolder.getAdapterPosition())));
+                billingFragment.openBillContainer(bills.get(viewHolder.getAdapterPosition()), billingFragment.getString(R.string.single_bill_title)));
         return viewHolder;
     }
 
@@ -71,14 +68,12 @@ public class BillingRecyclerViewAdapter extends RecyclerView.Adapter<BillingRecy
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private RelativeLayout parentLayout;
-//        private ConstraintLayout billingListSwitchableContainer;
         private TextView billingListThemeTv, billingListTargetTv, billingListPriceTv, billingListStatusTv;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             parentLayout = itemView.findViewById(R.id.parent_layout_billing);
-//            billingListSwitchableContainer = itemView.findViewById(R.id.billing_list_switchable_container);
             billingListStatusTv = itemView.findViewById(R.id.billing_list_status_tv);
             billingListThemeTv = itemView.findViewById(R.id.billing_list_theme_tv);
             billingListTargetTv = itemView.findViewById(R.id.billing_list_target_tv);

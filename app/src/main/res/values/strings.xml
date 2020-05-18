@@ -75,4 +75,6 @@
     <string name="delete_picture_message">Вы действительно хотите удалить эту фотографию?</string>
     <string name="create_bill_text">Счёт успешно выставлен!</string>
     <string name="update_bill_text">Счёт успешно обновлён!</string>
+    <string name="new_bill_title">Новый Счёт</string>
+    <string name="single_bill_title">Ваш Счёт</string>
 </resources>

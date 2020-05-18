@@ -34,7 +34,7 @@ public class MainDialog extends AppCompatDialogFragment {
         View view = View.inflate(requireActivity(), R.layout.main_dialog, null);
         fieldChangeEd = view.findViewById(R.id.field_change_ed);
         fieldChangeEd.setHint(title);
-        if (calledView.getId() == R.id.kid_age_container) {
+        if (calledView.getId() == R.id.kid_age_container || calledView.getId() == R.id.bill_price_container) {
             fieldChangeEd.setInputType(InputType.TYPE_CLASS_PHONE);
             if (editableContent.equals("null")) {
                 editableContent = "";

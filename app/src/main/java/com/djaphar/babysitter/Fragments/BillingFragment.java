@@ -193,7 +193,7 @@ public class BillingFragment extends MyFragment {
         });
 
         newBillBtn.setOnClickListener(lView -> openBillContainer(new Bill(null, "" ,"",
-                getDefaultChild(), false, 0f)));
+                getDefaultChild(), false, 0f), getString(R.string.new_bill_title)));
     }
 
     private void setActionBarTitle(String title) {
@@ -240,15 +240,13 @@ public class BillingFragment extends MyFragment {
         billTargetDialog.cancel();
     }
 
-    public void openBillContainer(Bill bill) {
+    public void openBillContainer(Bill bill, String actionBarTitle) {
         currentBill = bill;
         setBillOptions(bill);
-        String actionBarTitle = "Новый Счёт";
         setActionBarTitle(actionBarTitle);
         setBackBtnState(View.VISIBLE);
         ViewDriver.toggleChildViewsEnable(billContainer, true);
-        Animation animation = ViewDriver.showView(billContainer, R.anim.show_right_animation, context);
-        animation.setAnimationListener(new Animation.AnimationListener() {
+        ViewDriver.showView(billContainer, R.anim.show_right_animation, context).setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
                 billingListContainer.setVisibility(View.GONE);
@@ -275,11 +273,11 @@ public class BillingFragment extends MyFragment {
         }
         billThemeContent.setText(theme);
 
-        float price = bill.getSum();
-        if (price == (int) price) {
-            billPriceContent.setText(String.valueOf((int) price));
+        float sum = bill.getSum();
+        if (sum == (int) sum) {
+            billPriceContent.setText(String.valueOf((int) sum));
         } else {
-            billPriceContent.setText(String.format(Locale.US, "%.2f", bill.getSum()));
+            billPriceContent.setText(String.format(Locale.US, "%.2f", sum));
         }
 
         Child child = bill.getChild();
