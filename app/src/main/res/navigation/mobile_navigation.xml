@@ -21,6 +21,11 @@
         tools:layout="@layout/fragment_billing" />
 
     <fragment
+        android:id="@+id/navigation_gallery"
+        android:name="com.djaphar.babysitter.Fragments.GalleryFragment"
+        tools:layout="@layout/fragment_gallery" />
+
+    <fragment
         android:id="@+id/navigation_settings"
         android:name="com.djaphar.babysitter.Fragments.SettingsFragment"
         tools:layout="@layout/fragment_settings" />

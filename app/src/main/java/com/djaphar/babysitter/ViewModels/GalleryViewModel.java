@@ -4,9 +4,9 @@ import android.app.Application;
 import android.widget.Toast;
 
 import com.djaphar.babysitter.SupportClasses.ApiClasses.ApiBuilder;
-import com.djaphar.babysitter.SupportClasses.ApiClasses.Food;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.GalleryPicture;
 import com.djaphar.babysitter.SupportClasses.ApiClasses.MainApi;
-import com.djaphar.babysitter.SupportClasses.LocalDataClasses.LocalDataDao;
+import com.djaphar.babysitter.SupportClasses.ApiClasses.UpdatePictureModel;
 import com.djaphar.babysitter.SupportClasses.LocalDataClasses.LocalDataRoom;
 import com.djaphar.babysitter.SupportClasses.LocalDataClasses.User;
 
@@ -21,56 +21,53 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SettingsViewModel extends AndroidViewModel {
+public class GalleryViewModel extends AndroidViewModel {
 
-    private MutableLiveData<ArrayList<Food>> foodsMutableLiveData = new MutableLiveData<>();
     private LiveData<User> userLiveData;
-    private LocalDataDao dao;
+    private MutableLiveData<ArrayList<GalleryPicture>> galleryPicturesMutableLiveData = new MutableLiveData<>();
     private MainApi mainApi;
 
-    public SettingsViewModel(@NonNull Application application) {
+    public GalleryViewModel(@NonNull Application application) {
         super(application);
-        dao = LocalDataRoom.getDatabase(application).localDataDao();
-        userLiveData = dao.getUser();
+        userLiveData = LocalDataRoom.getDatabase(application).localDataDao().getUser();
         mainApi = ApiBuilder.getMainApi();
-    }
-
-    public MutableLiveData<ArrayList<Food>> getFoods() {
-        return foodsMutableLiveData;
     }
 
     public LiveData<User> getUser() {
         return userLiveData;
     }
 
-    public void requestMyFoods(HashMap<String, String> headersMap) {
-        Call<ArrayList<Food>> call = mainApi.requestMyFoods(headersMap);
-        call.enqueue(new Callback<ArrayList<Food>>() {
+    public MutableLiveData<ArrayList<GalleryPicture>> getGalleryPictures() {
+        return galleryPicturesMutableLiveData;
+    }
+
+    public void requestMyGallery(HashMap<String, String> headersMap) {
+        mainApi.requestMyGallery(headersMap).enqueue(new Callback<ArrayList<GalleryPicture>>() {
             @Override
-            public void onResponse(@NonNull Call<ArrayList<Food>> call, @NonNull Response<ArrayList<Food>> response) {
+            public void onResponse(@NonNull Call<ArrayList<GalleryPicture>> call, @NonNull Response<ArrayList<GalleryPicture>> response) {
                 if (!response.isSuccessful()) {
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                foodsMutableLiveData.setValue(response.body());
+                galleryPicturesMutableLiveData.setValue(response.body());
             }
 
             @Override
-            public void onFailure(@NonNull Call<ArrayList<Food>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<GalleryPicture>> call, @NonNull Throwable t) {
                 Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void requestCreateFood(HashMap<String, String> headersMap, Food food) {
-        mainApi.requestCreateFood(headersMap, food).enqueue(new Callback<Void>() {
+    public void requestAddGalleryPicture(HashMap<String, String> headersMap, UpdatePictureModel updatePictureModel) {
+        mainApi.requestAddGalleryPicture(headersMap, updatePictureModel).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (!response.isSuccessful()) {
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                requestMyFoods(headersMap);
+                requestMyGallery(headersMap);
             }
 
             @Override
@@ -80,15 +77,15 @@ public class SettingsViewModel extends AndroidViewModel {
         });
     }
 
-    public void requestDeleteFood(HashMap<String, String> headersMap, String foodId) {
-        mainApi.requestDeleteFood(headersMap, foodId).enqueue(new Callback<Void>() {
+    public void requestDeleteGalleryPicture(HashMap<String, String> headersMap, String galleryId) {
+        mainApi.requestDeleteGalleryPicture(headersMap, galleryId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (!response.isSuccessful()) {
                     Toast.makeText(getApplication(), response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                requestMyFoods(headersMap);
+                requestMyGallery(headersMap);
             }
 
             @Override
@@ -96,9 +93,5 @@ public class SettingsViewModel extends AndroidViewModel {
                 Toast.makeText(getApplication(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    public void logout() {
-        LocalDataRoom.databaseWriteExecutor.execute(() -> dao.deleteUser());
     }
 }

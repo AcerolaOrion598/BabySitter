@@ -79,6 +79,7 @@ public class BillingFragment extends MyFragment {
             setActionBarTitle(getString(R.string.title_billing));
             setBackBtnState(View.GONE);
             mainActivity.setNewBtnState(View.GONE);
+            mainActivity.setDeleteBtnState(View.GONE);
         }
         return root;
     }

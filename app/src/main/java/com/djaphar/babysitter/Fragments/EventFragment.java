@@ -101,6 +101,7 @@ public class EventFragment extends MyFragment implements DatePickerDialog.OnDate
             setActionBarTitle(getString(R.string.title_event));
             setBackBtnState(View.GONE);
             mainActivity.setNewBtnState(View.GONE);
+            mainActivity.setDeleteBtnState(View.GONE);
         }
         return root;
     }

@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.djaphar.babysitter.Fragments.ChildrenFragment;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.Adapters.MainDialog;
 import com.djaphar.babysitter.SupportClasses.OtherClasses.MyFragment;
@@ -26,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements MainDialog.MainDi
 
     private final static int SELECT_PICTURE_ID = 1;
     private TextView actionBarTitle, backBtn;
-    private ConstraintLayout newBtnContainer;
+    private ConstraintLayout newBtnContainer, deleteBtnContainer;
     private ImageView newBtn;
 
     @Override
@@ -37,13 +36,16 @@ public class MainActivity extends AppCompatActivity implements MainDialog.MainDi
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            actionBar.setCustomView(R.layout.actoin_bar);
+            actionBar.setCustomView(R.layout.action_bar);
             actionBarTitle = findViewById(R.id.action_bar_title);
             backBtn = findViewById(R.id.back_btn);
             newBtnContainer = findViewById(R.id.new_btn_container);
-            backBtn.setOnClickListener(lView -> onBackPressed());
+            deleteBtnContainer = findViewById(R.id.delete_btn_container);
             newBtn = findViewById(R.id.new_btn);
+            ImageView deleteBtn = findViewById(R.id.delete_btn);
+            backBtn.setOnClickListener(lView -> onBackPressed());
             newBtn.setOnClickListener(lView -> newBtnWasPressed());
+            deleteBtn.setOnClickListener(lView -> deleteBtnWasPressed());
         }
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
@@ -68,15 +70,11 @@ public class MainActivity extends AppCompatActivity implements MainDialog.MainDi
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SELECT_PICTURE_ID && resultCode == RESULT_OK && data != null) {
-            ChildrenFragment childrenFragment = null;
-            NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-            if (navHostFragment != null) {
-                childrenFragment = (ChildrenFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
-            }
-            if (childrenFragment == null) {
+            MyFragment myFragment = getMyFragment();
+            if (myFragment == null) {
                 return;
             }
-            childrenFragment.setSelectedPicture(data.getData());
+            myFragment.setSelectedPicture(data.getData());
         }
     }
 
@@ -92,12 +90,24 @@ public class MainActivity extends AppCompatActivity implements MainDialog.MainDi
         newBtnContainer.setVisibility(visibilityState);
     }
 
+    public void setDeleteBtnState(int visibilityState) {
+        deleteBtnContainer.setVisibility(visibilityState);
+    }
+
     private void newBtnWasPressed() {
         MyFragment myFragment = getMyFragment();
         if (myFragment == null) {
             return;
         }
         myFragment.newBtnWasPressed();
+    }
+
+    private void deleteBtnWasPressed() {
+        MyFragment myFragment = getMyFragment();
+        if (myFragment == null) {
+            return;
+        }
+        myFragment.deleteBtnWasPressed();
     }
 
     public void selectPicture() {

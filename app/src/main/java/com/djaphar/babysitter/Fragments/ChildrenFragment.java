@@ -19,7 +19,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.djaphar.babysitter.Activities.MainActivity;
 import com.djaphar.babysitter.R;
 import com.djaphar.babysitter.SupportClasses.Adapters.ChildrenRecyclerViewAdapter;
@@ -106,6 +105,7 @@ public class ChildrenFragment extends MyFragment {
             setActionBarTitle(getString(R.string.title_children));
             setBackBtnState(View.GONE);
             mainActivity.setNewBtnState(View.GONE);
+            mainActivity.setDeleteBtnState(View.GONE);
         }
         return root;
     }
@@ -210,7 +210,7 @@ public class ChildrenFragment extends MyFragment {
                 .setNegativeButton(R.string.cancel_button, (dialogInterface, i) -> dialogInterface.cancel())
                 .setPositiveButton(R.string.ok_button, (dialogInterface, i) -> {
                     childrenViewModel.requestDeletePicture(authHeader,
-                            new UpdatePictureModel(currentChild.getChildId(), getString(R.string.child_profile), null));
+                            new UpdatePictureModel(currentChild.getChildId(), getString(R.string.child_profile), null, null));
                     ViewDriver.hideView(deletePictureBtn, R.anim.hide_round_btn, context);
                     currentView = kidInfoContainer;
                 })
@@ -428,7 +428,7 @@ public class ChildrenFragment extends MyFragment {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             picture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             String pictureStr = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
-            childrenViewModel.requestUpdatePicture(authHeader, new UpdatePictureModel(childId, profile, pictureStr));
+            childrenViewModel.requestUpdatePicture(authHeader, new UpdatePictureModel(childId, profile, pictureStr, null));
             return null;
         }
     }

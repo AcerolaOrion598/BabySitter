@@ -17,6 +17,11 @@
         android:title="@string/billing" />
 
     <item
+        android:id="@+id/navigation_gallery"
+        android:icon="@drawable/ic_apps_black_24dp"
+        android:title="@string/gallery_title" />
+
+    <item
         android:id="@+id/navigation_settings"
         android:icon="@drawable/ic_settings_black_24dp"
         android:title="@string/settings" />

@@ -23,7 +23,7 @@ public class AuthActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            actionBar.setCustomView(R.layout.actoin_bar);
+            actionBar.setCustomView(R.layout.action_bar);
             TextView actionBarTitle = findViewById(R.id.action_bar_title);
             actionBarTitle.setText(R.string.login_title);
         }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BabySitter</string>
+    <string name="app_name">MyChild</string>
     <string name="title_children">Ваша Группа</string>
     <string name="title_billing">Ваши Счета</string>
     <string name="title_event">Ваши События</string>
@@ -77,4 +77,7 @@
     <string name="update_bill_text">Счёт успешно обновлён!</string>
     <string name="new_bill_title">Новый Счёт</string>
     <string name="single_bill_title">Ваш Счёт</string>
+    <string name="gallery_title">Галерея</string>
+    <string name="pic_description_ed_hint">Добавьте описание</string>
+    <string name="null_description">Нет описания</string>
 </resources>

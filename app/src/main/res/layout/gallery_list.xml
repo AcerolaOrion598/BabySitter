@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout_gallery"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/gallery_picture"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        tools:ignore="ContentDescription"
+        android:scaleType="centerCrop"/>
+
+</RelativeLayout>

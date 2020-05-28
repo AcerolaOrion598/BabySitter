@@ -51,6 +51,7 @@ public class SettingsFragment extends MyFragment {
             setActionBarTitle(getString(R.string.settings));
             setBackBtnState(View.GONE);
             setNewBtnState(View.GONE);
+            mainActivity.setDeleteBtnState(View.GONE);
         }
         return root;
     }
