@@ -33,9 +33,7 @@ public class GalleryRecyclerViewAdapter extends RecyclerView.Adapter<GalleryRecy
         final Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.gallery_list, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.parentLayout.setOnClickListener(lView -> {
-            galleryFragment.setClickedPicture(galleryPictures.get(viewHolder.getAdapterPosition()));
-        });
+        viewHolder.parentLayout.setOnClickListener(lView -> galleryFragment.setClickedPicture(galleryPictures.get(viewHolder.getAdapterPosition())));
         return viewHolder;
     }
 

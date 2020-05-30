@@ -75,12 +75,12 @@ public interface MainApi {
     @DELETE("bill/{bill_id}/")
     Call<Void> requestDeleteBill(@HeaderMap Map<String, String> headers, @Path("bill_id") String bill_id);
 
-    @GET("/gallery/")
+    @GET("gallery/")
     Call<ArrayList<GalleryPicture>> requestMyGallery(@HeaderMap Map<String, String> headers);
 
-    @POST("/gallery/")
+    @POST("gallery/")
     Call<Void> requestAddGalleryPicture(@HeaderMap Map<String, String> headers, @Body UpdatePictureModel updatePictureModel);
 
-    @DELETE("/gallery/gallery_id/")
+    @DELETE("gallery/gallery_id/")
     Call<Void> requestDeleteGalleryPicture(@HeaderMap Map<String, String> headers, @Query("gallery_id") String gallery_id);
 }
