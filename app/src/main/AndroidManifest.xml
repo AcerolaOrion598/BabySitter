@@ -14,7 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.AuthActivity">
+        <activity
+            android:name=".Activities.AuthActivity"
+            android:windowSoftInputMode="adjustResize">
 
         </activity>
         <activity
